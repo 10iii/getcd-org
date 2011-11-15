@@ -175,6 +175,8 @@ actions = {
 	
 	"/":	
 	function(req, res){
+		res.header('Vary', 'User-Agent');
+		res.header('Cache-Control', 'private');
 		res.redirect('/index.1');
 	},
 	
