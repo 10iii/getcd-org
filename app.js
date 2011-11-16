@@ -6,13 +6,14 @@
 var PAGEITEMNUMBER = 20;
 var DBCACHESECOND = 20;
 
+var cfg = require('./config.js');
 var express = require('express');
 var app = module.exports = express.createServer();
 //var tenjin = require('./nTenjin.js');
 var tenjin = require('tenjin');
 
-var redis = require("redis"),
-    redclient = redis.createClient();
+var redis = require("redis");
+var redclient = redis.createClient();
 
 redclient.on("error", function (err) {
     console.log("Redis connection error to " + client.host + ":" + client.port + " - " + err);
@@ -32,49 +33,16 @@ var
   row,
   rows;
 
-/**
- * Set database connection settings
- */
-var
-  host = "127.0.0.1",
-  user = "cidbuser",
-  password = "d20101111",
-  database = "getcd",
-  test_table = "verycd";
-  
-  var
-  host2 = "127.0.0.1",
-  user2 = "indexuser",
-  password2 = "1109atindex",
-  database2 = "getcdindex",
-  test_table2 = "verycd",
-  port2 = 3316;
-  /*
-var
-  host = "127.0.0.1",
-  user = "getcddb",
-  password = "getat1106",
-  database = "getcd",
-  test_table = "verycd";
-
-  var
-  host2 = "127.0.0.1",
-  user2 = "indexuser",
-  password2 = "1109atindex",
-  database2 = "getcdindex",
-  test_table2 = "verycd",
-  port2 = 3316;
-*/
 
 
 /**
  * Create connection
  */
 conn = mysql.createConnectionSync();
-conn.connectSync(host, user, password, database);
+conn.connectSync(cfg.host, cfg.user, cfg.password, cfg.database);
 
 conn2 = mysql.createConnectionSync();
-conn2.connectSync(host2, user2, password2, database2, port2);
+conn2.connectSync(cfg.host2, cfg.user2, cfg.password2, cfg.database2, cfg.port2);
 
 /**
  * Check connection status
