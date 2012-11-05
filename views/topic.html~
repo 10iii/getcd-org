@@ -4,8 +4,8 @@
     <p class="browse">
     <a href="/">Home</a> 
 	»
-	<a href="/category/#{encodeURI(it.main_category)}" title="View all topics in ${it.main_category}" rel="category tag">${it.main_category}</a>, 
-	<a href="/category/#{encodeURI(it.main_category+'/'+it.sub_category)}" title="View all topics in ${it.main_category+'/'+it.sub_category}" rel="category tag">${it.main_category+'/'+it.sub_category}</a> 
+	<a href="/category/#{encodeURI(it.category1)}" title="View all topics in ${it.category1}" rel="category tag">${it.category1}</a>, 
+	<a href="/category/#{encodeURI(it.category1+'/'+it.category2)}" title="View all topics in ${it.category1+'/'+it.category2}" rel="category tag">${it.category1+'/'+it.category2}</a> 
 	» 
 	</p>
  <div class="clear"></div>
@@ -14,14 +14,14 @@
 <div id="contentInfo">
 	<h1 id="topicstitle">${it.title}</h1>
     <div class="topicImg">
-	    <a title="${it.title}" href="/topic/${it.topic_id}" id="topicImgUrl">
+	    <a title="${it.title}" href="/topic/${it.verycdid}" id="topicImgUrl">
 	    <?js 
-	    //var imgurlreg = RegExp('<img .*?\>','i').exec(it.content);
-	    //var srcstrreg = imgurlreg?RegExp('src=.+?[\\s"\']','i').exec(imgurlreg[0]):null;
-	    //var srcstr = srcstrreg?srcstrreg[0]:null;
+	    var imgurlreg = RegExp('<img .*?\>','i').exec(it.content);
+	    var srcstrreg = imgurlreg?RegExp('src=.+?[\\s"\']','i').exec(imgurlreg[0]):null;
+		var srcstr = srcstrreg?srcstrreg[0]:null;
 	    //var newsrc = srcstr?srcstr.replace(/\(.+?(?=\/thumb\.jpg)/i,'(120x120)'):null;
 	    ?>
-		<img src="http://img.getcd.org/t/#{it.topic_id}.jpg"  class="cover" />
+		<img #{srcstr} class="cover" />
         </a>
         <div>
             <div style="margin-top:5px; " id="visitTimes">
@@ -67,8 +67,8 @@
                     <li>
                         <strong style="display:inline-block;vertical-align:top;">分类：</strong>
                         <span style="display:inline-block;vertical-align:top;">
-				<a style="text-decoration: underline;" href="http://www.getcd.org/category/${it.main_category}">${it.main_category}</a>&nbsp;
-				<a style="text-decoration: underline;" href="/category/#{encodeURI(it.main_category+'/'+it.sub_category)}" >${it.sub_category}</a>&nbsp;
+				<a style="text-decoration: underline;" href="http://www.getcd.org/category/${it.category1}">${it.category1}</a>&nbsp;
+				<a style="text-decoration: underline;" href="/category/#{encodeURI(it.category1+'/'+it.category2)}" >${it.category2}</a>&nbsp;
                         </span>
                     </li>
                 </ul>
@@ -119,7 +119,7 @@
 			</tr>
 			<?js
 			var ed2kitems =[]; 
-			it.hash_link.toString().split('ed2k://').filter(function(element, index, thearray){
+			it.ed2k.toString().split('ed2k://').filter(function(element, index, thearray){
 				return element.length>0?true:false;
 			}).forEach(function(element, index, thearray){
 				ed2kitems.push(element.split('`'));
@@ -128,21 +128,21 @@
 			for (item in ed2kitems){
 			?>
 			<tr class="ed2kitem" name="itemline" >
-				<td><input type="checkbox" name="topic${it.topic_id}item" value="ed2k://#{ed2kitems[item][0]}" onclick="em_size(''+this.name+'');" checked="checked"></td>
+				<td><input type="checkbox" name="topic${it.verycdid}item" value="ed2k://#{ed2kitems[item][0]}" onclick="em_size(''+this.name+'');" checked="checked"></td>
 				<td><a href="ed2k://#{ed2kitems[item][0].replace(/\|/g,'%7C')}" ed2k="ed2k://#{ed2kitems[item][0]}">#{ed2kitems[item][1]}</a></td>
-				<td name="topic${it.topic_id}itemsize" class="itemsize">0</td>
+				<td name="topic${it.verycdid}itemsize" class="itemsize">0</td>
 			</tr>
 			<?js
 			}; //for (item in ed2kitems){
 			?>
 			<tr class="ed2kitem">
-			<td><input type="checkbox" id="checkall_topic${it.topic_id}item" class="forminput" onclick="checkAll('topic${it.topic_id}item',this.checked)" checked="checked"></td>
+			<td><input type="checkbox" id="checkall_topic${it.verycdid}item" class="forminput" onclick="checkAll('topic${it.verycdid}item',this.checked)" checked="checked"></td>
 			<td>
-			<input type="button" value="下载/DOWNLOAD" class="downbutton" onclick="download('topic${it.topic_id}item',0,1)">&nbsp;
-			<input type="button" value="IE复制/IE COPY" class="downbutton" onclick="copy('topic${it.topic_id}item')">&nbsp;
+			<input type="button" value="下载/DOWNLOAD" class="downbutton" onclick="download('topic${it.verycdid}item',0,1)">&nbsp;
+			<input type="button" value="IE复制/IE COPY" class="downbutton" onclick="copy('topic${it.verycdid}item')">&nbsp;
 			<input type="button" alt="#TB_inline?height=400&width=700&inlineId=popupcontent" title="请全选并复制到粘贴板" class="thickbox downbutton" value="复制/COPY LINKS" id="copyselect">
 			</td>
-			<td width="70" id="size_topic${it.topic_id}item" class="sizesum" >0</td>
+			<td width="70" id="size_topic${it.verycdid}item" class="sizesum" >0</td>
 			</tr>
 	</tbody>
 </table>
@@ -154,8 +154,8 @@
     <div class="clear"></div>
     <div class="tags">
       Tags: 
-	  <a href="/category/#{encodeURI(it.main_category)}" title="View all topics in ${it.main_category}" rel="tag">${it.main_category}</a>, 
-	  <a href="/category/#{encodeURI(it.main_category+'/'+it.sub_category)}" title="View all topics in ${it.main_category+'/'+it.sub_category}" rel="tag">${it.main_category+'/'+it.sub_category}</a> 
+	  <a href="/category/#{encodeURI(it.category1)}" title="View all topics in ${it.category1}" rel="tag">${it.category1}</a>, 
+	  <a href="/category/#{encodeURI(it.category1+'/'+it.category2)}" title="View all topics in ${it.category1+'/'+it.category2}" rel="tag">${it.category1+'/'+it.category2}</a> 
 	</div>
   </div>
   <!--end: entry-->
@@ -236,7 +236,7 @@
 				);
 				for (item in relateditems){
 				?>
-				<li><a href="/topic/VC${relateditems[item][0]}" title="VC${relateditems[item][0]} | ${relateditems[item][1]}">${relateditems[item][1]}</a></li>
+				<li><a href="/topic/${relateditems[item][0]}" title="${relateditems[item][0]} | ${relateditems[item][1]}">${relateditems[item][1]}</a></li>
 				<?js
 				}; //for (item in relateditems){
 				?>

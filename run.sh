@@ -1,1 +1,1 @@
-NODE_ENV=development node ./app.js
+NODE_ENV=development node ./getcd-org-app-3001.js
