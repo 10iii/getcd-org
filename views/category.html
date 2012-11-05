@@ -2,16 +2,16 @@
 if (it.pagecount.toString().length == 0){
 	it.pagecount = [1];
 }
-var thispagelink = '/category/'+encodeURI(it.category1+(it.category2.toString().length > 0 ? '/'+it.category2 : ''));
+var thispagelink = '/category/'+encodeURI(it.main_category+(it.sub_category.toString().length > 0 ? '/'+it.sub_category : ''));
 ?>
 <div id="content">
     <p class="browse">
     <a href="/">Home</a> 
 	»
-	<a href="/category/#{encodeURI(it.category1)}" title="View all topics in ${it.category1}" rel="category tag">${it.category1}</a>
+	<a href="/category/#{encodeURI(it.main_category)}" title="View all topics in ${it.main_category}" rel="category tag">${it.main_category}</a>
 	»
-	<?js if(it.category2.toString().length > 0){?>
-	<a href="/category/#{encodeURI(it.category1+'/'+it.category2)}" title="View all topics in ${it.category1+'/'+it.category2}" rel="category tag">${it.category1+'/'+it.category2}</a> 
+	<?js if(it.sub_category.toString().length > 0){?>
+	<a href="/category/#{encodeURI(it.main_category+'/'+it.sub_category)}" title="View all topics in ${it.main_category+'/'+it.sub_category}" rel="category tag">${it.main_category+'/'+it.sub_category}</a> 
 	»<?js } ?>
 	Page #{it.pagecount}
 	</p>
@@ -34,11 +34,11 @@ if ((typeof(itemrows)!="undefined")&&(itemrows.length>0)){
 	<div class="gcdthumbdiv">
     <div class="thumb">
 		
-		<a title="${it.itrows[ind].title}" href="/topic/${it.itrows[ind].verycdid}" rel="bookmark"> <img src="http://img.simplecd.org/image/#{it.itrows[ind].verycdid}.jpg" alt="${it.itrows[ind].verycdid}"> </a>
+		<a title="${it.itrows[ind].title}" href="/topic/${it.itrows[ind].topic_id}" rel="bookmark"> <img src="http://img.getcd.org/t/#{it.itrows[ind].topic_id}.jpg" alt="${it.itrows[ind].topic_id}"> </a>
     </div><!--end: thumb-->
 	</div><!--end: class="gcdthumbdiv"-->
     <div class="boxmeta left">
-      <h2> <a href="/topic/${it.itrows[ind].verycdid}" rel="bookmark">
+      <h2> <a href="/topic/${it.itrows[ind].topic_id}" rel="bookmark">
         ${it.itrows[ind].title}</a></h2>
 		<!--
       <span class="by">Posted by
@@ -52,8 +52,8 @@ if ((typeof(itemrows)!="undefined")&&(itemrows.length>0)){
 	更新时间: ${it.itrows[ind].updtime}
 	<br />
     <div class="readmore">分类: 
-		<a href="/category/#{encodeURI(it.itrows[ind].category1)}" title="View all topics in ${it.itrows[ind].category1}" rel="category tag">${it.itrows[ind].category1}</a>, 
-	<a href="/category/#{encodeURI(it.itrows[ind].category1+'/'+it.itrows[ind].category2)}" title="View all topics in ${it.itrows[ind].category1+'/'+it.itrows[ind].category2}" rel="category tag">${it.itrows[ind].category2}</a> 
+		<a href="/category/#{encodeURI(it.itrows[ind].main_category)}" title="View all topics in ${it.itrows[ind].main_category}" rel="category tag">${it.itrows[ind].main_category}</a>, 
+	<a href="/category/#{encodeURI(it.itrows[ind].main_category+'/'+it.itrows[ind].sub_category)}" title="View all topics in ${it.itrows[ind].main_category+'/'+it.itrows[ind].sub_category}" rel="category tag">${it.itrows[ind].sub_category}</a> 
 	</div>
     </div> <!--end: post-content-->
   </div><!--end: postbox-->

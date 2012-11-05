@@ -9,13 +9,14 @@ var DBCACHESECOND = 20;
 var cfg = require('./config.js');
 var express = require('express');
 var app = module.exports = express.createServer();
+//var tenjin = require('./nTenjin.js');
 var tenjin = require('tenjin');
 
 var redis = require("redis");
 var redclient = redis.createClient();
 
 redclient.on("error", function (err) {
-    console.log("Redis connection error to " + client.host + ":" + client.port + " - " + err);
+	console.log("Redis connection error to " + client.host + ":" + client.port + " - " + err);
 });
 
 redclient.select(5);
@@ -24,13 +25,13 @@ redclient.select(5);
 //var db = sqlite.openDatabaseSync("./verycd.sqlite3.db");
 
 var
-  sys = require('sys'),
-  mysql = require('mysql-libmysqlclient'),
-  conn,
-  conn2,
-  result,
-  row,
-  rows;
+	sys = require('sys'),
+	mysql = require('mysql-libmysqlclient'),
+	conn,
+	conn2,
+	result,
+	row,
+	rows;
 
 
 
@@ -149,8 +150,9 @@ actions = {
 	
 	"/2":	
 	function(req, res){
-		res.render('index', {
-			title: 'Express'
+		res.render('test', {
+			title: 'Express',
+			testid: 123
 		})
 	},
 	
