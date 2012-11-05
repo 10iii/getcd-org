@@ -9,7 +9,6 @@ var DBCACHESECOND = 20;
 var cfg = require('./config.js');
 var express = require('express');
 var app = module.exports = express.createServer();
-//var tenjin = require('./nTenjin.js');
 var tenjin = require('tenjin');
 
 var redis = require("redis");
