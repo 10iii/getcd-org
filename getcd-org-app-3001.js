@@ -55,7 +55,7 @@
 	});
 
 	try{
-		app.listen(3001);
+		app.listen(cfg.listenport);
 		console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 	}catch(e){
 		console.log("Error: "+e.message);
