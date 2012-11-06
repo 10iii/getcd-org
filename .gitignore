@@ -4,3 +4,4 @@ useless/
 .*
 !.gitignore
 package.json
+tools/node_modules/
