@@ -23,6 +23,18 @@
 	result = conn.storeResultSync();
 	
 	var gquery = {
+		escapes : function (raw) {
+			return conn.escapeSync(raw);
+		},
+		upd : function (sqlstr, callb) {
+			conn.query(sqlstr, function (err, sqlres) {
+				if (err) {
+					throw err;
+				}
+				//console.log("redis set:"+redkey);
+				callb(sqlres);
+			});
+		},
 		gq : function (sqlstr, callb, expired) {
 			if (expired !== undefined && expired > 0){
 				var redkey = "myquery:" + encodeURI(sqlstr);

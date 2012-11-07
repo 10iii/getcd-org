@@ -2,9 +2,18 @@
 	"use strict";
 	var util = require("util");
 	var Crawler = require("crawler").Crawler;
+	var gquery =require('../gcd-query.js');
+	var myupd = gquery.upd;
+	var escap = gquery.escapes;
 	var tt=[];
-	var regs = /<td class="cover-info">\s*?<a href="\/entry\/([a-zA-Z0-9]+?)\/">\s*?<img class="cover" src="(.+?)" \/><\/a>[\S\s]+?"><div class="title">([\S\s]+?)<\/div><\/a>\s*?<div class="abstract">([\S\s]+?)<\/div>\s*?<div class="description">([\S\s]+?)<\/div>\s*?<div class="datetime">\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<b>\S*?<\/b>:<i>([\S\s]+?)<\/i>\s*?<\/div>[\S\s]+?<td class="user-info">\s*?<img src='\S*?' title='([\S]+?)'/g;
-	var regs2 = /<td class="cover-info">\s*?<a href="\/entry\/([a-zA-Z0-9]+?)\/">\s*?<img class="cover" src="(.+?)" \/><\/a>[\S\s]+?"><div class="title">([\S\s]+?)<\/div><\/a>\s*?<div class="abstract">([\S\s]+?)<\/div>\s*?<div class="description">([\S\s]+?)<\/div>\s*?<div class="datetime">\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<b>\S*?<\/b>:<i>([\S\s]+?)<\/i>\s*?<\/div>[\S\s]+?<td class="user-info">\s*?<img src='\S*?' title='([\S]+?)'/;
+	var regs = /<td class="cover-info">\s*?<a href="\/entry\/([a-zA-Z0-9]+?)\/">\s*?<img class="cover" src="(.+?)" \/><\/a>[\S\s]+?"><div class="title">([\S\s]+?)<\/div><\/a>\s*?<div class="abstract">([\S\s]+?)<\/div>\s*?<div class="description">([\S\s]+?)<\/div>\s*?<div class="datetime">\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<\/div>[\S\s]+?<td class="user-info">\s*?<img src='\S*?' title='([\S]+?)'/g;
+	var regs2 = /<td class="cover-info">\s*?<a href="\/entry\/([a-zA-Z0-9]+?)\/">\s*?<img class="cover" src="(.+?)" \/><\/a>[\S\s]+?"><div class="title">([\S\s]+?)<\/div><\/a>\s*?<div class="abstract">([\S\s]+?)<\/div>\s*?<div class="description">([\S\s]+?)<\/div>\s*?<div class="datetime">\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<\/div>[\S\s]+?<td class="user-info">\s*?<img src='\S*?' title='([\S]+?)'/;
+	var timeclean = function (ori) {
+		//return ori.toString().replace('年','-').replace('月','-').replace('日',' ').replace('时',':').replace('分',':00');
+		var ori = ori.toString().trim();
+		var des = ori.substr(0,4)+'-'+ori.substr(5,2)+'-'+ori.substr(8,2)+' '+ori.substr(12,2)+':'+ori.substr(15,2);
+		return des;
+	};
 	var c = new Crawler({
 		"maxConnections" : 10,
 		"jQuery" : false,
@@ -14,31 +23,64 @@
 				throw error;
 			}
 			//console.log(result.body);
-			console.log(result.statusCode);
-			if (result.statusCode == '503') {
-				console.log(result.uri,"503 retry...");
+			//console.log(result.statusCode);
+			if (result.statusCode.toString().substr(0,2) == '50') {
+				util.log(result.uri + " - " + result.statusCode + " - " + "retry...");
 				c.queue(result.uri);
 			} else if (result.statusCode == '200') {
 				var matchgroup = result.body.toString().match(regs);
 				if (util.isArray(matchgroup)) {
-					//for (var i = 0, len = matchgroup.length; i < len; i++){
-					//	console.log(matchgroup[i]);
-					//	var items = regs2.exec(matchgroup[i]);
-					//	console.log(items);
-					//}
-					console.log(result.uri,"parsed items",matchgroup.length);
+					var sqlstr = "INSERT `gcd_entry` (`entry_id`, `topic_id`, `res_site`," +
+						" `res_id`, `title`, `author`," +
+						" `brief`, `abstract`, `pubtime`," +
+						" `updtime`, `res_link`, `thumb_link`," +
+						" `image_link`, `post_flag`, `posttime`," +
+						" `thumb_flag`, `image_flag`, `fetch_flag`," +
+						" `res_html`, `entrytime`) VALUES ";
+					var valuestr = [];
+					for (var i = 0, len = matchgroup.length; i < len; i++) {
+						var items = regs2.exec(matchgroup[i]);
+						if (items.length == 9) {
+							valuestr.push("(DEFAULT, " +
+								" 'SC" + escap(items[1].trim()) + "'," +
+								" 'SC'," +
+								" '" + escap(items[1].trim()) + "'," +
+								" '" + escap(items[3].trim()) + "'," +
+								" '" + escap(items[8].trim()) + "'," +
+								" '" + escap(items[5].trim()) + "'," +
+								" '" + escap(items[4].trim()) + "'," +
+								" '" + escap(timeclean(items[6].trim())) + "'," +
+								" '" + escap(timeclean(items[7].trim())) + "'," +
+								" '" + escap('http://simplecd.me/entry/' + items[1].trim() + '/') + "'," +
+								" '" + escap(items[2].trim()) + "'," +
+								" NULL," +
+								" 0," +
+								" NULL," +
+								" 0," +
+								" 0," +
+								" 0," +
+								" NULL," +
+								"NOW() )");
+
+						} else {
+							util.log(result.uri + " - " + result.statusCode + " - " + "bad item");
+						}
+					}
+					sqlstr += valuestr.join(', ');
+					myupd(sqlstr, function (rows) {
+						util.log(result.uri + " - " + "insert DB rows" + " - " + rows);
+					});
+					//console.log(sqlstr);
+					util.log(result.uri + " - " + result.statusCode + " - " + "parsed items" + " - " + matchgroup.length);
 				} else {
-					console.log(result.uri,"could not parse this page");
+					util.log(result.uri + " - " + result.statusCode + " - " + "parse failure");
 				}
 				addwork(c);
 			} else {
-				console.log(result.uri,result.statusCode);
+				util.log(result.uri + " - " + result.statusCode + " - " + "Ignore...");
 				addwork(c);
 			}
 		},
-		"onDrain" : function () {
-			process.exit();
-		}
 	});
 
 	var addwork = function(){
