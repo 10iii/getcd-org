@@ -1,10 +1,8 @@
 (function () {
 	"use strict";
-	var util = require("util");
 	var Crawler = require("crawler").Crawler;
+	var fs = require("fs");
 	var tt=[];
-	var regs = /<td class="cover-info">\s*?<a href="\/entry\/([a-zA-Z0-9]+?)\/">\s*?<img class="cover" src="(.+?)" \/><\/a>[\S\s]+?"><div class="title">([\S\s]+?)<\/div><\/a>\s*?<div class="abstract">([\S\s]+?)<\/div>\s*?<div class="description">([\S\s]+?)<\/div>\s*?<div class="datetime">\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<b>\S*?<\/b>:<i>([\S\s]+?)<\/i>\s*?<\/div>[\S\s]+?<td class="user-info">\s*?<img src='\S*?' title='([\S]+?)'/g;
-	var regs2 = /<td class="cover-info">\s*?<a href="\/entry\/([a-zA-Z0-9]+?)\/">\s*?<img class="cover" src="(.+?)" \/><\/a>[\S\s]+?"><div class="title">([\S\s]+?)<\/div><\/a>\s*?<div class="abstract">([\S\s]+?)<\/div>\s*?<div class="description">([\S\s]+?)<\/div>\s*?<div class="datetime">\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<b>\S*?<\/b>:<i>([\S\s]+?)<\/i>\s*?<\/div>[\S\s]+?<td class="user-info">\s*?<img src='\S*?' title='([\S]+?)'/;
 	var c = new Crawler({
 		"maxConnections" : 10,
 		"jQuery" : false,
@@ -14,31 +12,14 @@
 				throw error;
 			}
 			//console.log(result.body);
-			console.log(result.statusCode);
-			if (result.statusCode == '503') {
-				console.log(result.uri,"503 retry...");
-				c.queue(result.uri);
-			} else if (result.statusCode == '200') {
-				var matchgroup = result.body.toString().match(regs);
-				if (util.isArray(matchgroup)) {
-					//for (var i = 0, len = matchgroup.length; i < len; i++){
-					//	console.log(matchgroup[i]);
-					//	var items = regs2.exec(matchgroup[i]);
-					//	console.log(items);
-					//}
-					console.log(result.uri,"parsed items",matchgroup.length);
-				} else {
-					console.log(result.uri,"could not parse this page");
-				}
-				addwork(c);
-			} else {
-				console.log(result.uri,result.statusCode);
-				addwork(c);
+			var matchgroup = result.body.toString().match(regs);
+			for (var i = 0, len = matchgroup.length; i < len; i++){
+				console.log(matchgroup[i]);
+				var items = regs2.exec(matchgroup[i]);
+
+				console.log(items);
 			}
 		},
-		"onDrain" : function () {
-			process.exit();
-		}
 	});
 
 	var addwork = function(){
@@ -52,12 +33,18 @@
 		}
 		return refunc;
 	}();
-
-	addwork(c);
-	addwork(c);
-	addwork(c);
-
-
+	c.queue([{
+		"uri" : 'http://i.simplecd.me/Yso1e5wH.jpg',
+		"forceUTF8" : false,
+		"callback" : function (error,result) {
+			if (error) throw error;
+			console.log(result.statusCode);
+			console.log(result.headers);
+			//console.log(result.);
+			result.setEncoding("binary");
+			fs.writeFile("./test2.jpg",result.body,"binary",function(){console.log("done.")});
+		},
+	}]);
 }());
 
 
