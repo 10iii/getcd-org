@@ -3,7 +3,7 @@
 	var util = require("util");
 	var Crawler = require("crawler").Crawler;
 	var gquery =require('../gcd-query.js');
-	var myupd = gquery.upd;
+	var myquery = gquery.gq;
 	var escap = gquery.escapes;
 	var tt=[];
 	var regs = /<td class="cover-info">\s*?<a href="\/entry\/([a-zA-Z0-9]+?)\/">\s*?<img class="cover" src="(.+?)" \/><\/a>[\S\s]+?"><div class="title">([\S\s]+?)<\/div><\/a>\s*?<div class="abstract">([\S\s]+?)<\/div>\s*?<div class="description">([\S\s]+?)<\/div>\s*?<div class="datetime">\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<\/div>[\S\s]+?<td class="user-info">\s*?<img src='\S*?' title='([\S]+?)'/g;
@@ -67,7 +67,7 @@
 						}
 					}
 					sqlstr += valuestr.join(', ');
-					myupd(sqlstr, function (rows) {
+					myquery(sqlstr, function (rows) {
 						util.log(result.uri + " - " + "insert DB rows" + " - " + rows);
 					});
 					//console.log(sqlstr);

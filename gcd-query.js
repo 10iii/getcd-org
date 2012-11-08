@@ -6,8 +6,7 @@
 		console.log("Redis connection error to " + redclient.host + ":" + redclient.port + " - " + err);
 	});
 	redclient.select(cfg.redisdb);
-	var
-		util = require('util'),
+	var	util = require('util'),
 		mysql = require('mysql-libmysqlclient'),
 		conn,
 		result;
@@ -26,15 +25,6 @@
 		escapes : function (raw) {
 			return conn.escapeSync(raw);
 		},
-		upd : function (sqlstr, callb) {
-			conn.query(sqlstr, function (err, sqlres) {
-				if (err) {
-					throw err;
-				}
-				//console.log("redis set:"+redkey);
-				callb(sqlres);
-			});
-		},
 		gq : function (sqlstr, callb, expired) {
 			if (expired !== undefined && expired > 0){
 				var redkey = "myquery:" + encodeURI(sqlstr);
@@ -50,14 +40,18 @@
 								if (err) {
 									throw err;
 								}	  
-								sqlres.fetchAll(function (err, rows) {
-									if (err) {
-										throw err;
-									}
-									redclient.setex(redkey,  expired, JSON.stringify(rows));
-									//console.log("redis set:"+redkey);
-									callb(rows);
-								});
+								if (sqlres.numRowsSync() > 0) {
+									sqlres.fetchAll(function (err, rows) {
+										if (err) {
+											throw err;
+										}
+										redclient.setex(redkey,  expired, JSON.stringify(rows));
+										//console.log("redis set:"+redkey);
+										callb(rows);
+									});
+								} else {
+									callb(conn.affectedRowsSync());
+								}
 							});
 						} //else //if(res)
 					} //else   //if(err){
@@ -67,12 +61,16 @@
 					if (err) {
 						throw err;
 					}	  
-					sqlres.fetchAll(function (err, rows) {
-						if (err) {
-							throw err;
-						}
-						callb(rows);
-					});
+					if (sqlres.numRowsSync() > 0) {
+						sqlres.fetchAll(function (err, rows) {
+							if (err) {
+								throw err;
+							}
+							callb(rows);
+						});
+					} else {
+						callb(conn.affectedRowsSync());
+					}
 				});
 			} //}else{ //if(expired !== undefined || expired > 0){
 		}
