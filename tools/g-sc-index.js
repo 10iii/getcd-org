@@ -91,7 +91,7 @@
 		var pagecount = 0;
 		var refunc = function (c){
 			pagecount++;
-			fs.writeFile('pagelog.txt', pagecount, function (err) {
+			fs.writeFileSync('pagelog~', pagecount, function (err) {
 				  if (err) throw err;
 			});
 			var uri = "http://simplecd.me/category/?flag=1&page=" + pagecount;
