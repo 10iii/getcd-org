@@ -15,7 +15,16 @@
 	<h1 id="topicstitle">${it.title}</h1>
     <div class="topicImg">
 	    <a title="${it.title}" href="/topic/${it.topic_id}" id="topicImgUrl">
-	    <?js 
+		<?js
+			var formattime = function (dtstr) {
+				var dt = new Date(dtstr);
+				var res = '' +  dt.getFullYear()+'-'+
+						((dt.getMonth()+1)>9?'':'0')+(dt.getMonth()+1)+'-'+
+						(dt.getDate()>9?'':'0')+dt.getDate()+' '+
+						dt.getHours()+':'+dt.getMinutes()+':'+dt.getSeconds();
+				return res;
+			}
+
 	    //var imgurlreg = RegExp('<img .*?\>','i').exec(it.content);
 	    //var srcstrreg = imgurlreg?RegExp('src=.+?[\\s"\']','i').exec(imgurlreg[0]):null;
 	    //var srcstr = srcstrreg?srcstrreg[0]:null;
@@ -37,15 +46,15 @@
         <div class="block1">
             <div id="block11" class="block11">
                 <ul>
-                    <li><strong style="display:inline-block;vertical-align:top;">状态：</strong>
+                    <li><strong style="display:inline-block;vertical-align:top;">摘要:</strong>
                         <span id="topicStatusDiv" style="display:inline-block;vertical-align:top;">
 						<!--
 							<img id="requestIcon" src="http://v4.vcimg.com/images/group/elite_on.gif" alt="">
 						-->
-		<span id="requestWords">${it.thestatus}</span><span id="handle_s"></span>
+		<span id="requestWords">${it.abstract?it.abstract:''}</span><span id="handle_s"></span>
                         </span>
                     </li>
-                    <li><strong style="display:inline-block;vertical-align:top;">摘要：</strong>
+                    <li><strong style="display:inline-block;vertical-align:top;"></strong>
                         <span style="display:inline-block;vertical-align:top;">
                         <span id="requestWords">${it.brief}</span>
 						<!--
@@ -58,14 +67,14 @@
                         </span>
                     </li>
                     <li>
-                        <strong style="display:inline-block;vertical-align:top;">时间：</strong>
-			<span style="display:inline-block;vertical-align:top;" class="date-time" title="${it.pubtime}">${it.pubtime}</span>
+                        <strong style="display:inline-block;vertical-align:top;"></strong>
+			<span style="display:inline-block;vertical-align:top;" class="date-time" title="${it.pubtime}">${formattime(it.pubtime)}</span>
                         <span style="display:inline-block;vertical-align:top;">发布  | </span>
-			<span style="display:inline-block;vertical-align:top;" class="date-time" title="${it.updtime}">${it.updtime}</span>
+			<span style="display:inline-block;vertical-align:top;" class="date-time" title="${it.updtime}">${formattime(it.updtime)}</span>
                         <span style="display:inline-block;vertical-align:top;">更新</span>
                     </li>
                     <li>
-                        <strong style="display:inline-block;vertical-align:top;">分类：</strong>
+                        <strong style="display:inline-block;vertical-align:top;">分类:</strong>
                         <span style="display:inline-block;vertical-align:top;">
 				<a style="text-decoration: underline;" href="http://www.getcd.org/category/${it.main_category}">${it.main_category}</a>&nbsp;
 				<a style="text-decoration: underline;" href="/category/#{encodeURI(it.main_category+'/'+it.sub_category)}" >${it.sub_category}</a>&nbsp;

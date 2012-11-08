@@ -18,19 +18,13 @@
 			return '';
 		}
 	};
-	var MAX_TIME = '1990-01-01 00:00:00';
-	var MAX_PAGE = 20010;
+	var MAX_TIME = new Date('1990-01-01 00:00:00');
+	var MAX_PAGE = 20;//20010;
 	var tmp = false;
 	var sqlstr = "SELECT MAX(updtime) as lasttime  FROM gcd_entry";
 	myquery(sqlstr,function (res) {
 		if (util.isArray(res)&&res[0]["lasttime"]) {
-			tmp = res[0]["lasttime"];
-			MAX_TIME = tmp.getFullYear()+'-'+
-				((tmp.getMonth()+1)>9?'':'0')+(tmp.getMonth()+1)+'-'+
-				(tmp.getDate()>9?'':'0')+tmp.getDate()+' '+
-				tmp.getHours()+':'+tmp.getMinutes()+':00';
-		} else {
-			MAX_TIME = '1990-01-01 00:00:00';
+			MAX_TIME = res[0]["lasttime"];
 		}
 	});
 	console.log(MAX_TIME);
@@ -62,7 +56,7 @@
 					for (var i = 0, len = matchgroup.length; i < len; i++) {
 						var items = regs2.exec(matchgroup[i]);
 						if (items.length == 9) {
-							if (timeclean(items[7].trim()) < MAX_TIME) {
+							if (new Date(timeclean(items[7].trim())) < MAX_TIME) {
 								continueflag = false;
 							} else {
 								valuestr.push("(DEFAULT, " +
