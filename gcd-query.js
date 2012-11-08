@@ -40,7 +40,7 @@
 								if (err) {
 									throw err;
 								}	  
-								if (sqlres.numRowsSync() > 0) {
+								if (sqlres.numRowsSync) {
 									sqlres.fetchAll(function (err, rows) {
 										if (err) {
 											throw err;
@@ -61,7 +61,7 @@
 					if (err) {
 						throw err;
 					}	  
-					if (sqlres.numRowsSync() > 0) {
+					if (sqlres.numRowsSync) {
 						sqlres.fetchAll(function (err, rows) {
 							if (err) {
 								throw err;

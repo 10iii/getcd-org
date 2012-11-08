@@ -30,4 +30,4 @@ CREATE TABLE `gcd_entry` (
 	  KEY `fetch_flag` (`fetch_flag`),
 	  KEY `entrytime` (`entrytime`),
 	  KEY `topic_id` (`topic_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2141 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;

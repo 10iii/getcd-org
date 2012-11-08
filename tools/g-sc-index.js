@@ -13,11 +13,27 @@
 		var reg = /(\d{4})\D+?(\d{2})\D+?(\d{2})\D+?\s+(\d{2})\D+?(\d{2})\D+?/;
 		var item = reg.exec(ori);
 		if (util.isArray(item) && item.length === 6) {
-			return (item[1]+'-'+item[2]+'-'+item[3]+' '+item[4]+':'+item[5]);
+			return (item[1]+'-'+item[2]+'-'+item[3]+' '+item[4]+':'+item[5]+':00');
 		} else {
 			return '';
 		}
 	};
+	var MAX_TIME = '1990-01-01 00:00:00';
+	var MAX_PAGE = 20010;
+	var tmp = false;
+	var sqlstr = "SELECT MAX(updtime) as lasttime  FROM gcd_entry";
+	myquery(sqlstr,function (res) {
+		if (util.isArray(res)&&res[0]["lasttime"]) {
+			tmp = res[0]["lasttime"];
+			MAX_TIME = tmp.getFullYear()+'-'+
+				((tmp.getMonth()+1)>9?'':'0')+(tmp.getMonth()+1)+'-'+
+				(tmp.getDate()>9?'':'0')+tmp.getDate()+' '+
+				tmp.getHours()+':'+tmp.getMinutes()+':00';
+		} else {
+			MAX_TIME = '1990-01-01 00:00:00';
+		}
+	});
+	console.log(MAX_TIME);
 	var c = new Crawler({
 		"maxConnections" : 3,
 		"jQuery" : false,
@@ -26,6 +42,7 @@
 			if (error){
 				throw error;
 			}
+			var continueflag = true;
 			//console.log(result.body);
 			//console.log(result.statusCode);
 			if (result.statusCode.toString().substr(0,2) == '50') {
@@ -45,41 +62,51 @@
 					for (var i = 0, len = matchgroup.length; i < len; i++) {
 						var items = regs2.exec(matchgroup[i]);
 						if (items.length == 9) {
-							valuestr.push("(DEFAULT, " +
-								" 'SC" + escap(items[1].trim()) + "'," +
-								" 'SC'," +
-								" '" + escap(items[1].trim()) + "'," +
-								" '" + escap(items[3].trim()) + "'," +
-								" '" + escap(items[8].trim()) + "'," +
-								" '" + escap(items[5].trim()) + "'," +
-								" '" + escap(items[4].trim()) + "'," +
-								" '" + escap(timeclean(items[6].trim())) + "'," +
-								" '" + escap(timeclean(items[7].trim())) + "'," +
-								" '" + escap('http://simplecd.me/entry/' + items[1].trim() + '/') + "'," +
-								" '" + escap(items[2].trim()) + "'," +
-								" NULL," +
-								" 0," +
-								" NULL," +
-								" 0," +
-								" 0," +
-								" 0," +
-								" NULL," +
-								"NOW() )");
-
+							if (timeclean(items[7].trim()) < MAX_TIME) {
+								continueflag = false;
+							} else {
+								valuestr.push("(DEFAULT, " +
+									" 'SC" + escap(items[1].trim()) + "'," +
+									" 'SC'," +
+									" '" + escap(items[1].trim()) + "'," +
+									" '" + escap(items[3].trim()) + "'," +
+									" '" + escap(items[8].trim()) + "'," +
+									" '" + escap(items[5].trim()) + "'," +
+									" '" + escap(items[4].trim()) + "'," +
+									" '" + escap(timeclean(items[6].trim())) + "'," +
+									" '" + escap(timeclean(items[7].trim())) + "'," +
+									" '" + escap('http://simplecd.me/entry/' + items[1].trim() + '/') + "'," +
+									" '" + escap(items[2].trim()) + "'," +
+									" NULL," +
+									" 0," +
+									" NULL," +
+									" 0," +
+									" 0," +
+									" 0," +
+									" NULL," +
+									"NOW() )"
+								);
+							}
 						} else {
 							util.log(result.uri + " - " + result.statusCode + " - " + "bad item");
 						}
 					}
-					sqlstr += valuestr.join(', ');
-					myquery(sqlstr, function (rows) {
-						util.log(result.uri + " - " + "insert DB rows" + " - " + rows);
-					});
+					if (valuestr.length > 0) {
+						sqlstr += valuestr.join(', ');
+						myquery(sqlstr, function (rows) {
+							util.log(result.uri + " - " + "insert DB rows" + " - " + rows);
+						});
+					}
 					//console.log(sqlstr);
 					util.log(result.uri + " - " + result.statusCode + " - " + "parsed items" + " - " + matchgroup.length);
 				} else {
 					util.log(result.uri + " - " + result.statusCode + " - " + "parse failure");
 				}
-				addwork(c);
+				if (continueflag) {
+					addwork(c);
+				} else {
+					util.log("Over max datetime, stop thread...");
+				}
 			} else {
 				util.log(result.uri + " - " + result.statusCode + " - " + "Ignore...");
 				addwork(c);
@@ -91,12 +118,16 @@
 		var pagecount = 0;
 		var refunc = function (c){
 			pagecount++;
-			fs.writeFileSync('pagelog~', pagecount, function (err) {
+			fs.writeFile('pagelog~', '' + pagecount, function (err) {
 				  if (err) throw err;
 			});
 			var uri = "http://simplecd.me/category/?flag=1&page=" + pagecount;
 			//console.log(uri);
-			c.queue(uri);
+			if (pagecount <= MAX_PAGE) {
+				c.queue(uri);
+			} else {
+				util.log("Over max page number, stop thread...");
+			}
 
 		}
 		return refunc;
