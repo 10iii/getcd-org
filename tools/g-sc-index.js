@@ -2,20 +2,24 @@
 	"use strict";
 	var util = require("util");
 	var Crawler = require("crawler").Crawler;
-	var gquery =require('../gcd-query.js');
+	var gquery = require('../gcd-query.js');
+	var fs = require("fs");
 	var myquery = gquery.gq;
 	var escap = gquery.escapes;
-	var tt=[];
 	var regs = /<td class="cover-info">\s*?<a href="\/entry\/([a-zA-Z0-9]+?)\/">\s*?<img class="cover" src="(.+?)" \/><\/a>[\S\s]+?"><div class="title">([\S\s]+?)<\/div><\/a>\s*?<div class="abstract">([\S\s]+?)<\/div>\s*?<div class="description">([\S\s]+?)<\/div>\s*?<div class="datetime">\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<\/div>[\S\s]+?<td class="user-info">\s*?<img src='\S*?' title='([\S]+?)'/g;
 	var regs2 = /<td class="cover-info">\s*?<a href="\/entry\/([a-zA-Z0-9]+?)\/">\s*?<img class="cover" src="(.+?)" \/><\/a>[\S\s]+?"><div class="title">([\S\s]+?)<\/div><\/a>\s*?<div class="abstract">([\S\s]+?)<\/div>\s*?<div class="description">([\S\s]+?)<\/div>\s*?<div class="datetime">\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<\/div>[\S\s]+?<td class="user-info">\s*?<img src='\S*?' title='([\S]+?)'/;
 	var timeclean = function (ori) {
-		//return ori.toString().replace('年','-').replace('月','-').replace('日',' ').replace('时',':').replace('分',':00');
 		var ori = ori.toString().trim();
-		var des = ori.substr(0,4)+'-'+ori.substr(5,2)+'-'+ori.substr(8,2)+' '+ori.substr(12,2)+':'+ori.substr(15,2);
-		return des;
+		var reg = /(\d{4})\D+?(\d{2})\D+?(\d{2})\D+?\s+(\d{2})\D+?(\d{2})\D+?/;
+		var item = reg.exec(ori);
+		if (util.isArray(item) && item.length === 6) {
+			return (item[1]+'-'+item[2]+'-'+item[3]+' '+item[4]+':'+item[5]);
+		} else {
+			return '';
+		}
 	};
 	var c = new Crawler({
-		"maxConnections" : 10,
+		"maxConnections" : 3,
 		"jQuery" : false,
 		"forceUTF8" : true,
 		"callback" : function (error,result) {
@@ -87,6 +91,9 @@
 		var pagecount = 0;
 		var refunc = function (c){
 			pagecount++;
+			fs.writeFile('pagelog.txt', pagecount, function (err) {
+				  if (err) throw err;
+			});
 			var uri = "http://simplecd.me/category/?flag=1&page=" + pagecount;
 			//console.log(uri);
 			c.queue(uri);
