@@ -23,7 +23,11 @@
 	
 	var gquery = {
 		escapes : function (raw) {
-			return conn.escapeSync(raw);
+			if (typeof(raw) === "undefined") {
+				return '';
+			} else{
+				return conn.escapeSync(raw);
+			}
 		},
 		gqs : function (sqlstr) {
 			conn.realQuerySync(sqlstr);
