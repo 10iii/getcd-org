@@ -2,6 +2,7 @@
 	var gquery =require('./gcd-query.js');
 	var myquery = gquery.gq;
 	var cfg = require('./config.js');
+	var gcddiv = require('./gcd-div.js');
 		
 	module.exports = {
 		"/":	
@@ -51,6 +52,7 @@
 						title: strcate1 + (strcate2 ? '/'+strcate2 : ''),
 						main_category: [strcate1],
 						sub_category: [strcate2],
+						div: gcddiv,
 						pagecount: [strpage],
 						totalpage: [1],
 						itrows: []
@@ -70,6 +72,7 @@
 							title: strcate1 + (strcate2 ? '/'+strcate2 : ''),
 							main_category: [strcate1],
 							sub_category: [strcate2],
+							div: gcddiv,
 							pagecount: [strpage],
 							totalpage: [Math.ceil(itemcount/cfg.PAGEITEMNUMBER)],
 							itrows: rows
@@ -97,6 +100,7 @@
 						searchfor: strsearch,
 						pagecount: [strpage],
 						totalpage: [1],
+						div: gcddiv,
 						itrows: []
 					});
 				}else{ //if(rows.length ==0){
@@ -114,6 +118,7 @@
 							title: "SEARCH - "+strsearch,
 							searchfor: strsearch,
 							pagecount: [strpage],
+							div: gcddiv,
 							totalpage: [strpage+2],
 							itrows: rows
 						});
@@ -136,6 +141,7 @@
 						starttime: start_time,
 						title: 'index',
 						pagecount: [strpage],
+						div: gcddiv,
 						totalpage: [1],
 						itrows: []
 					});
@@ -148,6 +154,7 @@
 						res.render('index',{
 							starttime: start_time,
 							title:  'index',
+							div: gcddiv,
 							pagecount: [strpage],
 							totalpage: [Math.ceil(itemcount/cfg.PAGEITEMNUMBER)],
 							itrows: rows

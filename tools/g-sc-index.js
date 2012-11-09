@@ -19,17 +19,16 @@
 		}
 	};
 	var MAX_TIME = new Date('1990-01-01 00:00:00');
-	var MAX_PAGE = 20;//20010;
-	var tmp = false;
+	var MAX_PAGE = 20010;
 	var sqlstr = "SELECT MAX(updtime) as lasttime  FROM gcd_entry";
 	myquery(sqlstr,function (res) {
 		if (util.isArray(res)&&res[0]["lasttime"]) {
-			MAX_TIME = res[0]["lasttime"];
+			//MAX_TIME = res[0]["lasttime"];
 		}
 	});
 	console.log(MAX_TIME);
 	var c = new Crawler({
-		"maxConnections" : 3,
+		"maxConnections" : 2,
 		"jQuery" : false,
 		"forceUTF8" : true,
 		"callback" : function (error,result) {
