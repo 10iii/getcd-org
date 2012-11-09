@@ -8,8 +8,9 @@
 	var myqs = gquery.gqs;
 	var escap = gquery.escapes;
 	var MAX_RETRY = 10;
+	var table_name = 'gcd_entry_test';
 	var retry_time = {};
-	var regs = /<td class="cover-info">\s*?<a href="\/entry\/([a-zA-Z0-9]+?)\/">\s*?<img class="cover" src="(.+?)" \/><\/a>[\S\s]+?"><div class="title">([\S\s]+?)<\/div><\/a>\s*?<div class="abstract">([\S\s]+?)<\/div>\s*?<div class="description">([\S\s]+?)<\/div>\s*?<div class="datetime">\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<\/div>[\S\s]+?<td class="user-info">\s*?<img src='\S*?' title='([\S]+?)'/g;
+	var regs = /<\/span>\s*?<span><a href="\/category\/\S+?\/">(\S*?)<\/a> &gt;\s*?<a href="\/category\/\S+?\/">(\S*?)<\/a><\/span>[\s\S]*?<tr><td class="needemule" colspan="3"><a href="http([\s\S]*?)<input type="checkbox" id="checkallemule" name="checkbox">[\s\S]*?<td class="post"><a target="_blank" href="\/search\/\?fromeid=(\w+?)&mode=relate">[\s\S]+?<table class="description">([\s\S]*?)<\/table>\s*?<table class="ad-in-entry">[\s\S]*?<div class="ad-entry-sidebar-2">[\s\S]*?<table class="user-recommend">[\s\S]*?<\/table>[\s\S]*?<div class="ad-entry-sidebar-2">[\s\S]*?<table class="user-recommend">([\s\S]*?)<\/table>[\s\S]*?<div class="ad-entry-sidebar-2">[\s\S]*?<table class="user-recommend">([\s\S]*?)<\/table>/;
 	var regs2 = /<td class="cover-info">\s*?<a href="\/entry\/([a-zA-Z0-9]+?)\/">\s*?<img class="cover" src="(.+?)" \/><\/a>[\S\s]+?"><div class="title">([\S\s]+?)<\/div><\/a>\s*?<div class="abstract">([\S\s]+?)<\/div>\s*?<div class="description">([\S\s]+?)<\/div>\s*?<div class="datetime">\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<\/div>[\S\s]+?<td class="user-info">\s*?<img src='\S*?' title='([\S]+?)'/;
 	var timeclean = function (ori) {
 		var ori = ori.toString().trim();
@@ -21,16 +22,8 @@
 			return '';
 		}
 	};
-	var MAX_TIME = new Date('1990-01-01 00:00:00');
-	var MAX_PAGE = 20010;
-	var sqlstr = "SELECT MAX(updtime) as lasttime  FROM gcd_entry";
-	myquery(sqlstr,function (res) {
-		if (util.isArray(res)&&res[0]["lasttime"]) {
-			//MAX_TIME = res[0]["lasttime"];
-		}
-	});
-	console.log(MAX_TIME);
-
+	var sqlstr = "TRUNCATE TABLE gcd_topic_imp_sc";
+	myqs(sqlstr);
 	var parsemain = function (error, result) {
 		if (error){
 			throw error;
@@ -47,9 +40,9 @@
 				util.log(result.uri + " - " + result.statusCode + " - " + "fail...");
 			}
 		} else {
-			/*
-			var matchgroup = result.body.toString().match(regs);
-			if (util.isArray(matchgroup)) {
+			var matchgroup = regs.exec(result.body.toString());
+			if (matchgroup) {
+				/*
 				var sqlstr = "INSERT `gcd_entry` (`entry_id`, `topic_id`, `res_site`," +
 					" `res_id`, `title`, `author`," +
 					" `brief`, `abstract`, `pubtime`," +
@@ -95,12 +88,12 @@
 					myquery(sqlstr, function (rows) {
 						util.log(result.uri + " - " + "insert DB rows" + " - " + rows);
 					});
-				}
-				console.log(result.body.length);
+				}*/
+				console.log(matchgroup[1]);
 				//util.log(result.uri + " - " + result.statusCode + " - " + "parsed items" + " - " + matchgroup.length);
 			} else {
 				util.log(result.uri + " - " + result.statusCode + " - " + "parse failure");
-			}*/
+			}
 				console.log(result.body.length);
 		}
 	};
@@ -124,33 +117,38 @@
 			}
 		}
 	});
-	var addwork = function(work_id){
-		var sqlstr = '';
-		sqlstr = "UPDATE gcd_entry_test SET fetch_flag = '"+work_id+"' WHERE fetch_flag = 0 ORDER BY updtime LIMIT 100";
-		console.log(sqlstr);
-		var res = myqs(sqlstr);
-		console.log(res);
-		if (isNaN(res)) {
-			throw new Error("when get un-fetch records...");
-			process.exit();
-		}
-		if (res > 0) {
-			sqlstr = "INSERT INTO gcd_topic_imp_sc () SELECT * FROM gcd_entry_test WHERE fetch_flag = '"+work_id+"' ";
+	var addwork = function () {
+		var work_id = 5;
+		var tmp = function () {
+			work_id += 1;
+			var sqlstr = '';
+			sqlstr = "UPDATE " + table_name + " SET fetch_flag = '"+work_id+"' WHERE fetch_flag = 0 ORDER BY updtime LIMIT 100";
 			console.log(sqlstr);
-			myqs(sqlstr);
-			sqlstr = "SELECT res_link FROM gcd_entry_test WHERE fetch_flag = '"+work_id+"' ";
-			myquery(sqlstr,function (result) {
-				var i = 0, len = result.length;
-				for (i = 0; i < len; i += 1) {
-					c.queue([{
-						"uri" : result[i]["res_link"],
-						"callback" : parsemain
-					}]);
-				}
-			});
-		}
-		return res;
-	}
+			var res = myqs(sqlstr);
+			console.log(res);
+			if (isNaN(res)) {
+				throw new Error("when get un-fetch records...");
+				process.exit();
+			}
+			if (res > 0) {
+				sqlstr = "INSERT INTO gcd_topic_imp_sc () SELECT * FROM " + table_name + " WHERE fetch_flag = '"+work_id+"' ";
+				console.log(sqlstr);
+				myqs(sqlstr);
+				sqlstr = "SELECT res_link FROM " + table_name + " WHERE fetch_flag = '"+work_id+"' ";
+				myquery(sqlstr,function (result) {
+					var i = 0, len = result.length;
+					for (i = 0; i < len; i += 1) {
+						c.queue([{
+							"uri" : result[i]["res_link"],
+							"callback" : parsemain
+						}]);
+					}
+				});
+			}
+			return res;
+		};
+	return tmp;	
+	}();
 /*
 	var addwork = function(work_id){
 		var sqlstr = '';

@@ -29,7 +29,7 @@
 			'<div class="post-content">' +
 			'<span>' + item.brief + '</span>' +
 			'<br />' +
-			'更新时间: ' + item.updtime + '' +
+			'更新时间: ' + formattime(item.updtime) + '' +
 			'<br />' +
 			'<div class="readmore">分类: ' +
 			'<a href="/category/' + encodeURI(item.main_category) + 
