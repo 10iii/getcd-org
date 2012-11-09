@@ -25,6 +25,15 @@
 		escapes : function (raw) {
 			return conn.escapeSync(raw);
 		},
+		gqs : function (sqlstr) {
+			conn.realQuerySync(sqlstr);
+			var res = conn.storeResultSync();
+			if (res.numRowsSync) {
+				return res;
+			} else {
+				return conn.affectedRowsSync();
+			}
+		},
 		gq : function (sqlstr, callb, expired) {
 			if (expired !== undefined && expired > 0){
 				var redkey = "myquery:" + encodeURI(sqlstr);

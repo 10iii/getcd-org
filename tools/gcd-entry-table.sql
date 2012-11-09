@@ -1,4 +1,4 @@
-CREATE TABLE `gcd_entry` (
+CREATE TABLE `gcd_entry_test` (
 	  `entry_id` int(11) unsigned zerofill NOT NULL AUTO_INCREMENT,
 	  `topic_id` varchar(30) NOT NULL,
 	  `res_site` varchar(10) DEFAULT NULL,
