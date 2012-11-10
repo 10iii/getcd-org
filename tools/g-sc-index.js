@@ -106,6 +106,14 @@
 				addwork(c);
 			}
 		},
+		"onDrain" : function () {
+			if (addwork() === 0) {
+				setTimeout(function () {
+					util.log("DONE.");
+					process.exit();
+				},600000);
+			}
+		}
 	});
 
 	var addwork = function(){

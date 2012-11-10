@@ -17,7 +17,7 @@ CREATE TABLE `gcd_entry` (
   `thumb_flag` int(11) DEFAULT '0',
   `image_flag` int(11) DEFAULT '0',
   `fetch_flag` int(11) DEFAULT '0',
-  `res_html` text,
+  `res_html` mediumtext,
   `entrytime` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `ext_text_1` varchar(2000) DEFAULT NULL,
   `ext_flag_1` int(11) DEFAULT '0',

@@ -20,7 +20,9 @@
 	};
 	conn.realQuerySync("SET NAMES utf8;");
 	result = conn.storeResultSync();
-	
+ 	conn.realQuerySync("set interactive_timeout=24*3600");	
+	result = conn.storeResultSync();
+
 	var gquery = {
 		escapes : function (raw) {
 			if (typeof(raw) === "undefined") {

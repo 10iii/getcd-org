@@ -11,6 +11,7 @@
 	var MAX_RETRY = 20;
 	var table_name = 'gcd_entry_test';
 	var retry_time = {};
+	var groupfetch = {};
 	var regs = /<\/span>\s*?<span><a href="\/category\/\S+?\/">(\S*?)<\/a> &gt;\s*?<a href="\/category\/\S+?\/">(\S*?)<\/a><\/span>[\s\S]*?<tr><td class="needemule" colspan="3"><a href="http([\s\S]*?)<input type="checkbox" id="checkallemule" name="checkbox">[\s\S]*?<td class="post"><a target="_blank" href="\/search\/\?fromeid=(\w+?)&mode=relate">[\s\S]+?(<table class="description">[\s\S]*?<\/table>)\s*?<table class="ad-in-entry">[\s\S]*?<div class="ad-entry-sidebar-2">[\s\S]*?<table class="user-recommend">[\s\S]*?<\/table>[\s\S]*?<div class="ad-entry-sidebar-2">[\s\S]*?<table class="user-recommend">[\s\S]*?<\/table>[\s\S]*?<div class="ad-entry-sidebar-2">[\s\S]*?<table class="user-recommend">([\s\S]*?)<\/table>/;
 	var regrelated = /<tr><td class="cover"><img src="http[\s\S]*?title="([\s\S]*?)" \/><\/td><td><a href="\/entry\/(\S+?)">/g;
 	var regrelated2 = /<tr><td class="cover"><img src="http[\s\S]*?title="([\s\S]*?)" \/><\/td><td><a href="\/entry\/(\S+?)">/;
@@ -29,6 +30,18 @@
 			return '';
 		}
 	};
+	var is_group_all = function (tid) {
+		if (!groupfetch[tid]) {
+			return false;
+		}
+		var res = true, i, len = groupfetch[tid][0];
+		for (i = 1; i <= len; i += 1) {
+			if (!groupfetch[tid][i]) {
+				res = false;
+			}
+		}
+		return res;
+	}
 	//var sqlstr = "TRUNCATE TABLE gcd_topic_imp_sc";
 	//var tmp = myqs(sqlstr);
 	var parsemain = function (error, result) {
@@ -77,16 +90,36 @@
 					util.log(result.uri + " - " + "update entry res_html" + " - " + items[4]);
 				});
 				var linkarr = [];
+				var	groupcount = 0;
+				var group = [];
 				var matchlink = items[3].match(reglink);
 				len = matchlink.length;
 				for (i = 0; i < len; i += 1) {
 					reitem = reglink2.exec(matchlink[i]);
 					linkarr.push(reitem[1]);
 				}
-				c.queue([{
-					"uri" : 'http://simplecd.me/download/?seperate=copy&rid=' + linkarr.join('&rid=') + '&topicid=' + items[4],
-					"callback" : parsehashlink
-				}]);
+				if (len > 100) {
+					for (i = 0; i < len; i += 100) {
+						group.push(linkarr.slice(i,i + 100));
+						groupcount += 1;
+					}
+					groupfetch[items[4]] = [];
+					groupfetch[items[4]][0] = groupcount;
+					for (i = 1; i <= groupcount; i += 1) {
+						c.queue([{
+							"uri" : 'http://simplecd.me/download/?seperate=copy&rid=' +
+									group[i-1].join('&rid=') + 
+									'&topicid=' + items[4] +
+									'&groupsi=' + i,
+							"callback" : parsehashlink
+						}]);
+					}
+				} else {
+					c.queue([{
+						"uri" : 'http://simplecd.me/download/?seperate=copy&rid=' + linkarr.join('&rid=') + '&topicid=' + items[4],
+						"callback" : parsehashlink
+					}]);
+				}
 				util.log(result.uri + " - " + result.statusCode + " - " + "parsed " + " - " + items[4]);
 			} else {
 				util.log(result.uri + " - " + result.statusCode + " - " + "parse failure");
@@ -122,20 +155,33 @@
 				}
 				var urlpart = urltool.parse(result.uri,true);
 				var urlobj = urlpart.query;
-
-				var sqlstr = "UPDATE `gcd_topic_imp_sc` SET " +
-					"`hash_link` = '" + escap(JSON.stringify(hasharr)) + "' " +
-					" WHERE topic_id = 'SC" + escap(urlobj.topicid.trim()) + "' " ;
-				myquery(sqlstr, function (rows) {
-					util.log(result.uri + " - " + "update topic hash link" + " - " + urlobj.topicid);
-				});
-				sqlstr = "UPDATE `" + table_name + "` SET " +
-					"`ext_flag_1` = 1 " +
-					" WHERE topic_id = 'SC" + escap(urlobj.topicid.trim()) + "' " ;
-				myquery(sqlstr, function (rows) {
-					util.log(result.uri + " - " + "update entry ext_flag_1" + " - " + urlobj.topicid);
-				});
-				util.log(result.uri + " - " + result.statusCode + " - " + "parsed " + " - " + urlobj.topicid);
+				var tid = urlobj.topicid.trim();
+				if (urlobj.groupsi) {
+					var sid = urlobj.groupsi.trim();
+					groupfetch[tid][sid] = hasharr;
+					if (is_group_all(tid)) {
+						hasharr = [];
+						len = groupfetch[tid][0];
+						for (i = 1; i <= len; i += 1){
+							hasharr = hasharr.concat(groupfetch[tid][i]);
+						}
+					}
+				}
+				if (!urlobj.groupsi || is_group_all(tid)) {
+					var sqlstr = "UPDATE `gcd_topic_imp_sc` SET " +
+						"`hash_link` = '" + escap(JSON.stringify(hasharr)) + "' " +
+						" WHERE topic_id = 'SC" + escap(tid) + "' " ;
+					myquery(sqlstr, function (rows) {
+						util.log(result.uri + " - " + "update topic hash link" + " - " + tid);
+					});
+					sqlstr = "UPDATE `" + table_name + "` SET " +
+						"`ext_flag_1` = 1 " +
+						" WHERE topic_id = 'SC" + escap(tid) + "' " ;
+					myquery(sqlstr, function (rows) {
+						util.log(result.uri + " - " + "update entry ext_flag_1" + " - " + tid);
+					});
+				}
+				util.log(result.uri + " - " + result.statusCode + " - " + "parsed " + " - " + tid);
 			} else {
 				util.log(result.uri + " - " + result.statusCode + " - " + "parse failure");
 			}
@@ -152,7 +198,10 @@
 		},
 		"onDrain" : function () {
 			if (addwork() === 0) {
-				util.log("DONE.");
+				setTimeout(function () {
+					util.log("DONE.");
+					process.exit();
+				},600000);
 			}
 		}
 	});
