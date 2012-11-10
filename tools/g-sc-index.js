@@ -33,7 +33,8 @@
 		"forceUTF8" : true,
 		"callback" : function (error,result) {
 			if (error){
-				throw error;
+				util.log(error);
+				return;
 			}
 			var continueflag = true;
 			//console.log(result.body);

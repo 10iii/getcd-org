@@ -42,7 +42,7 @@
             </div>
        </div>
     </div>
-    <div style="float:left;width:380px;overflow:hidden;">
+    <div style="float:left;overflow:hidden;">
         <div class="block1">
             <div id="block11" class="block11">
                 <ul>
@@ -51,12 +51,12 @@
 						<!--
 							<img id="requestIcon" src="http://v4.vcimg.com/images/group/elite_on.gif" alt="">
 						-->
-		<span id="requestWords">${it.abstract?it.abstract:''}</span><span id="handle_s"></span>
+		<span id="requestWords">#{it.abstract?it.abstract:''}</span><span id="handle_s"></span>
                         </span>
                     </li>
                     <li><strong style="display:inline-block;vertical-align:top;"></strong>
                         <span style="display:inline-block;vertical-align:top;">
-                        <span id="requestWords">${it.brief}</span>
+                        <span id="requestWords">#{it.brief}</span>
 						<!--
                             <div id="iptcomLanguageWriting" class="iptcom">
                                 <span class="iptcom-title"><strong>语言</strong>:&nbsp;</span>
@@ -127,18 +127,27 @@
 				<td align="center" colspan="4">下面是用户共享的文件列表，推荐使用<a target="_blank" href="http://www.emule-project.net/home/perl/general.cgi?l=42&amp;rm=download">eMule</a>  进行下载，您可以点击这些文件名进行下载<br>Below are files shared by users, please use <a target="_blank" href="http://www.emule-project.net/">eMule</a> to download them</td>
 			</tr>
 			<?js
-			var ed2kitems =[]; 
-			it.hash_link.toString().split('ed2k://').filter(function(element, index, thearray){
-				return element.length>0?true:false;
-			}).forEach(function(element, index, thearray){
-				ed2kitems.push(element.split('`'));
-				}
-			);
+			var ed2kitems = [], tmped2k = []; 
+			if (it.res_site === 'VC') {
+				it.hash_link.toString().split('ed2k://').filter(function(element, index, thearray){
+					return element.length>0?true:false;
+				}).forEach(function(element, index, thearray){
+					tmped2k.push(element.split('`'));
+				});
+				tmped2k.forEach(function (ele, ind, arr) {
+					ed2kitems.push({
+						"title" : ele[1],
+						"link" : 'ed2k://' + ele[0]
+					});
+				});
+			} else {
+				ed2kitems = JSON.parse(it.hash_link);
+			}
 			for (item in ed2kitems){
 			?>
 			<tr class="ed2kitem" name="itemline" >
-				<td><input type="checkbox" name="topic${it.topic_id}item" value="ed2k://#{ed2kitems[item][0]}" onclick="em_size(''+this.name+'');" checked="checked"></td>
-				<td><a href="ed2k://#{ed2kitems[item][0].replace(/\|/g,'%7C')}" ed2k="ed2k://#{ed2kitems[item][0]}">#{ed2kitems[item][1]}</a></td>
+				<td><input type="checkbox" name="topic${it.topic_id}item" value="#{ed2kitems[item].link}" onclick="em_size(''+this.name+'');" checked="checked"></td>
+				<td><a href="#{ed2kitems[item].link.replace(/\|/g,'%7C')}" ed2k="#{ed2kitems[item].link}">#{ed2kitems[item].title}</a></td>
 				<td name="topic${it.topic_id}itemsize" class="itemsize">0</td>
 			</tr>
 			<?js
@@ -158,8 +167,8 @@
 </div> <!-- div class="emulemain" -->
 	<!--	</div> gcdcontent-->
   <div class="entry">
-	  <p>#{it.content.toString().replace(/\n/g,"<br />")}
-  </p>
+	  <div>#{it.res_site === 'VC'?it.content.toString().trim().replace(/\n/g,"<br />"):it.content.toString().trim()}
+  </div>
     <div class="clear"></div>
     <div class="tags">
       Tags: 
@@ -236,18 +245,27 @@
 		</div><div class="box">
 			<ul>
 				<?js
-				var relateditems =[]; 
-				it.related.toString().split('\n').filter(function(element, index, thearray){
-					return element.length>0?true:false;
-				}).forEach(function(element, index, thearray){
-					relateditems.push(element.split('`'));
-					}
-				);
+				var relateditems = [], tmprelated = [];
+				if (it.res_site === 'VC') {
+					it.related.toString().split('\n').filter(function(element, index, thearray){
+						return element.length>0?true:false;
+					}).forEach(function(element, index, thearray){
+						tmprelated.push(element.split('`'));
+					});
+					tmprelated.forEach(function (ele, ind, arr) {
+						relateditems.push({
+							"title" : ele[1],
+							"topic_id" : 'VC' + ele[0]
+						});
+					});
+				} else {
+					relateditems = JSON.parse(it.related);
+				}
 				for (item in relateditems){
 				?>
-				<li><a href="/topic/VC${relateditems[item][0]}" title="VC${relateditems[item][0]} | ${relateditems[item][1]}">${relateditems[item][1]}</a></li>
+				<li><a href="/topic/${relateditems[item].topic_id}" title="${relateditems[item].topic_id} | ${relateditems[item].title}">${relateditems[item].title}</a></li>
 				<?js
-				}; //for (item in relateditems){
+				}; //for (item in relateditems)
 				?>
 			</ul>
 		</div>

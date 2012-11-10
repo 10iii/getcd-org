@@ -1104,8 +1104,8 @@ a.addFavModule_a{display:block;width:120px;height:30px;}
 #contentInfo .block12 li{line-height:22px;height:24px;}
 #contentInfo a{color:#333;text-decoration:underline;}
 #contentInfo a:hover{color:#f30;}
-#contentInfo .block11{float:left;border-right:1px dotted #ccc;width:300px;overflow:hidden;}
-#contentInfo .block12{float:left;padding:5px 0;width:160px;overflow:hidden;}
+#contentInfo .block11{float:left;border-right:1px dotted #ccc;width:410px;overflow:hidden;}
+#contentInfo .block12{float:left;padding:5px 0;width:60px;overflow:hidden;}
 #contentInfo .block12 a{float:left;margin:0 3px 0 0;color:#fff;text-decoration:none;}
 #contentInfo .block2{width:100%;line-height:22px;padding:10px 0 0;}
 

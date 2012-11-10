@@ -8,7 +8,7 @@
 	var myquery = gquery.gq;
 	var myqs = gquery.gqs;
 	var escap = gquery.escapes;
-	var MAX_RETRY = 10;
+	var MAX_RETRY = 20;
 	var table_name = 'gcd_entry_test';
 	var retry_time = {};
 	var regs = /<\/span>\s*?<span><a href="\/category\/\S+?\/">(\S*?)<\/a> &gt;\s*?<a href="\/category\/\S+?\/">(\S*?)<\/a><\/span>[\s\S]*?<tr><td class="needemule" colspan="3"><a href="http([\s\S]*?)<input type="checkbox" id="checkallemule" name="checkbox">[\s\S]*?<td class="post"><a target="_blank" href="\/search\/\?fromeid=(\w+?)&mode=relate">[\s\S]+?(<table class="description">[\s\S]*?<\/table>)\s*?<table class="ad-in-entry">[\s\S]*?<div class="ad-entry-sidebar-2">[\s\S]*?<table class="user-recommend">[\s\S]*?<\/table>[\s\S]*?<div class="ad-entry-sidebar-2">[\s\S]*?<table class="user-recommend">[\s\S]*?<\/table>[\s\S]*?<div class="ad-entry-sidebar-2">[\s\S]*?<table class="user-recommend">([\s\S]*?)<\/table>/;
@@ -29,13 +29,12 @@
 			return '';
 		}
 	};
-	console.log('art');
-	var sqlstr = "TRUNCATE TABLE gcd_topic_imp_sc";
-	var tmp = myqs(sqlstr);
-	console.log('start');
+	//var sqlstr = "TRUNCATE TABLE gcd_topic_imp_sc";
+	//var tmp = myqs(sqlstr);
 	var parsemain = function (error, result) {
 		if (error){
-			throw error;
+			util.log(error);
+			return;
 		}
 		if (result.statusCode != '200') {
 			if (!(retry_time[result.uri]) || retry_time[result.uri] < MAX_RETRY) {
@@ -57,23 +56,23 @@
 				for (i = 0; i < len; i += 1) {
 					reitem = regrelated2.exec(matchrelated[i]);
 					relatedarr.push({
-						"topic_id" : 'SC' + reitem[2],
-						"title" : reitem[1]
+						"topic_id" : 'SC' + reitem[2].trim(),
+						"title" : reitem[1].trim()
 					});
 				}
 				var sqlstr = "UPDATE `gcd_topic_imp_sc` SET " +
-					"`main_category` = '" + escap(items[1]) + "', " +
-					"`sub_category` = '" + escap(items[2]) + "', " +
-					"`content` = '" + escap(items[5]) + "', " +
+					"`main_category` = '" + escap(items[1].trim()) + "', " +
+					"`sub_category` = '" + escap(items[2].trim()) + "', " +
+					"`content` = '" + escap(items[5].trim()) + "', " +
 					"`related` = '" + escap(JSON.stringify(relatedarr)) + "' " +
-					" WHERE topic_id = 'SC" + escap(items[4]) + "' " ;
+					" WHERE topic_id = 'SC" + escap(items[4].trim()) + "' " ;
 				myquery(sqlstr, function (rows) {
 					util.log(result.uri + " - " + "update topic" + " - " + items[4]);
 				});
 				sqlstr = "UPDATE `" + table_name + "` SET " +
 					"`fetch_flag` = 1, " +
-					"`res_html` = '" + escap(result.body.toString()) + "' "+
-					" WHERE topic_id = 'SC" + escap(items[4]) + "' " ;
+					"`res_html` = '" + escap(result.body.toString().trim()) + "' "+
+					" WHERE topic_id = 'SC" + escap(items[4].trim()) + "' " ;
 				myquery(sqlstr, function (rows) {
 					util.log(result.uri + " - " + "update entry res_html" + " - " + items[4]);
 				});
@@ -96,7 +95,8 @@
 	};
 	var parsehashlink = function (error, result) {
 		if (error){
-			throw error;
+			util.log(error);
+			return;
 		}
 		if (result.statusCode != '200') {
 			if (!(retry_time[result.uri]) || retry_time[result.uri] < MAX_RETRY) {
@@ -116,8 +116,8 @@
 				for (i = 0; i < len; i += 1) {
 					item = reghash2.exec(matchhash[i]);
 					hasharr.push({
-						"title" : item[2],
-						"link" : item[1]
+						"title" : item[2].trim(),
+						"link" : item[1].trim()
 					});
 				}
 				var urlpart = urltool.parse(result.uri,true);
@@ -125,14 +125,13 @@
 
 				var sqlstr = "UPDATE `gcd_topic_imp_sc` SET " +
 					"`hash_link` = '" + escap(JSON.stringify(hasharr)) + "' " +
-					" WHERE topic_id = 'SC" + escap(urlobj.topicid) + "' " ;
-				console.log(sqlstr);
+					" WHERE topic_id = 'SC" + escap(urlobj.topicid.trim()) + "' " ;
 				myquery(sqlstr, function (rows) {
 					util.log(result.uri + " - " + "update topic hash link" + " - " + urlobj.topicid);
 				});
 				sqlstr = "UPDATE `" + table_name + "` SET " +
 					"`ext_flag_1` = 1 " +
-					" WHERE topic_id = 'SC" + escap(urlobj.topicid) + "' " ;
+					" WHERE topic_id = 'SC" + escap(urlobj.topicid.trim()) + "' " ;
 				myquery(sqlstr, function (rows) {
 					util.log(result.uri + " - " + "update entry ext_flag_1" + " - " + urlobj.topicid);
 				});
@@ -153,6 +152,7 @@
 		},
 		"onDrain" : function () {
 			if (addwork() === 0) {
+				util.log("DONE.");
 			}
 		}
 	});
@@ -162,9 +162,7 @@
 			work_id += 1;
 			var sqlstr = '';
 			sqlstr = "UPDATE " + table_name + " SET fetch_flag = '"+work_id+"' WHERE fetch_flag = 0 ORDER BY updtime LIMIT 10";
-			console.log(sqlstr);
 			var res = myqs(sqlstr);
-			console.log(res);
 			if (isNaN(res)) {
 				throw new Error("when get un-fetch records...");
 				process.exit();
@@ -172,12 +170,11 @@
 			if (res > 0) {
 				sqlstr = "INSERT INTO gcd_topic_imp_sc (`topic_id`, `hash_type`, `rank`, `title`, " +
 					"`author`, `brief`, `pubtime`, `updtime`, " +
-					"`res_site`, `res_link`, `abstract`, `res_id`) " +
+					"`res_site`, `res_link`, `abstract`, `res_id` ) " +
 					"SELECT `topic_id`, 'ed2k', 1, `title`, " +
 					"`author`, `brief`, `pubtime`, `updtime`, " +
 					"`res_site`, `res_link`, `abstract`, `res_id` " +
 					"FROM " + table_name + " WHERE fetch_flag = '" + work_id + "' ";
-				console.log(sqlstr);
 				myqs(sqlstr);
 				sqlstr = "SELECT res_link FROM " + table_name + " WHERE fetch_flag = '"+work_id+"' ";
 				myquery(sqlstr,function (result) {
