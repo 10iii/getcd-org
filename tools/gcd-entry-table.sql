@@ -18,7 +18,7 @@ CREATE TABLE `gcd_entry` (
   `image_flag` int(11) DEFAULT '0',
   `fetch_flag` int(11) DEFAULT '0',
   `res_html` text,
-  `entrytime` datetime DEFAULT NULL,
+  `entrytime` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `ext_text_1` varchar(2000) DEFAULT NULL,
   `ext_flag_1` int(11) DEFAULT '0',
   `ext_text_2` varchar(2000) DEFAULT NULL,
@@ -35,5 +35,6 @@ CREATE TABLE `gcd_entry` (
   KEY `ext_flag_2` (`ext_flag_2`),
   KEY `ext_flag_1` (`ext_flag_1`),
   KEY `entrytime` (`entrytime`),
+  UNIQUE KEY `topic_id_uni` (`topic_id`),
   KEY `topic_id` (`topic_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3925 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
