@@ -1,4 +1,4 @@
-CREATE TABLE `gcd_topic_imp_sc` (
+CREATE TABLE `gcd_topic` (
   `topic_id` varchar(30) NOT NULL,
   `hash_type` varchar(10) DEFAULT NULL,
   `rank` tinyint(4) NOT NULL DEFAULT '1',
@@ -16,6 +16,7 @@ CREATE TABLE `gcd_topic_imp_sc` (
   `res_link` varchar(200) DEFAULT NULL,
   `abstract` varchar(2000) DEFAULT NULL,
   `res_id` varchar(30) DEFAULT NULL,
+  `createtime` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`topic_id`),
   UNIQUE KEY `topic_id` (`topic_id`),
   KEY `index_hash_type` (`hash_type`),
@@ -28,4 +29,4 @@ CREATE TABLE `gcd_topic_imp_sc` (
   KEY `ind_rank_main_upd` (`rank`,`main_category`,`updtime`),
   KEY `ind_rank_id` (`rank`,`topic_id`),
   KEY `ind_rank_upd` (`rank`,`updtime`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ;
