@@ -3,7 +3,13 @@
 	var myquery = gquery.gq;
 	var cfg = require('./config.js');
 	var gcddiv = require('./gcd-div.js');
-		
+	var readline = require('readline');
+	var spawn = require('child_process').spawn;
+	var wordseg = spawn('./tools/searchseg');
+	var rl = readline.createInterface({
+		  input: wordseg.stdout,
+		  output: wordseg.stdin
+	});
 	module.exports = {
 		"/":	
 		function(req, res){
@@ -18,6 +24,18 @@
 				title: 'Express',
 				testid: 123
 			})
+		},
+		"/st/:searchfor.:page([0-9]+)?":	
+		function(req, res){
+			var start_time = Date.now();
+			var strsearch=(typeof(req.params.searchfor)=="string"?req.params.searchfor.replace(/[\/\-\\]/g,"").substring(0,50):void(0));
+			var strpage=(typeof(req.params.page)=="string"?parseInt(req.params.page):1);
+			rl.question(strsearch+"\n", function(strseg){
+				res.render('test', {
+					title: strseg,
+					testid: 123
+				});
+			});
 		},
 		
 		"/test":	
