@@ -57,7 +57,7 @@ if ((typeof(itemrows)!="undefined")&&(itemrows.length>0)){
 	
 	pages.sort(function(a,b){return a-b;});
 	?>
-	<span class="pages">Page #{pagecount} of #{totalcount}</span>
+	<!--	<span class="pages">Page #{pagecount} of #{totalcount}</span>-->
 	<?js //prev page
 	if(pagecount-1 >= 1){
 		?><a href="#{thispagelink+'.'+(pagecount-1)}" class="page">上页</a><?js

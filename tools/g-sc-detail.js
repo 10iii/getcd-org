@@ -210,7 +210,7 @@
 		var tmp = function () {
 			work_id += 1;
 			var sqlstr = '';
-			sqlstr = "UPDATE " + table_name + " SET fetch_flag = '"+work_id+"' WHERE fetch_flag = 0 ORDER BY updtime LIMIT 10";
+			sqlstr = "UPDATE " + table_name + " SET fetch_flag = '"+work_id+"' WHERE fetch_flag = 0 LIMIT 50";
 			var res = myqs(sqlstr);
 			if (isNaN(res)) {
 				throw new Error("when get un-fetch records...");

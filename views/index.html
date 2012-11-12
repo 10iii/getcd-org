@@ -46,7 +46,7 @@ if ((typeof(itemrows)!="undefined")&&(itemrows.length>0)){
 	var pagecount = parseInt(it.pagecount);
 	var totalcount = parseInt(it.totalpage)>1?parseInt(it.totalpage):1;
 	var pages = [];
-	pages.push(pagecount-100,pagecount-10,pagecount-2,pagecount-1,pagecount,pagecount+1,pagecount+2,pagecount+10,pagecount+100);
+	pages.push(pagecount-10,pagecount-5,pagecount-2,pagecount-1,pagecount,pagecount+1,pagecount+2,pagecount+5,pagecount+10);
 	pages = pages.filter(function(em){
 		if(em>1&&em<totalcount){ 
 			return true;
@@ -56,7 +56,7 @@ if ((typeof(itemrows)!="undefined")&&(itemrows.length>0)){
 	
 	pages.sort(function(a,b){return a-b;});
 	?>
-	<span class="pages">Page #{pagecount} of #{totalcount}</span>
+	<!--	<span class="pages">Page #{pagecount} of totalcount</span>-->
 	<?js //prev page
 	if(pagecount-1 >= 1){
 		?><a href="#{thispagelink+'.'+(pagecount-1)}" class="page">上页</a><?js

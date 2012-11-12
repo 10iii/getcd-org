@@ -40,7 +40,10 @@
 			var strcate1=(typeof(req.params.cate1)=="string"?req.params.cate1.replace(/[\/\-\\]/g,"").substring(0,20):void(0));
 			var strcate2=(typeof(req.params.cate2)=="string"?req.params.cate2.replace(/[\/\-\\]/g,"").substring(0,20):void(0));
 			var strpage=(typeof(req.params.page)=="string"?parseInt(req.params.page):1);
-			
+			if (strpage > 300) {
+				res.redirect("/404");
+				return;
+			}
 			var countsqlstr = "SELECT sum(count) AS itemcount FROM gcd_cate_count WHERE main_category = '"+strcate1+"' "
 				+(strcate2?" AND sub_category = '"+strcate2+"' ":" ")
 				+";";
@@ -74,7 +77,7 @@
 							sub_category: [strcate2],
 							div: gcddiv,
 							pagecount: [strpage],
-							totalpage: [Math.ceil(itemcount/cfg.PAGEITEMNUMBER)],
+							totalpage: [300], //[Math.ceil(itemcount/cfg.PAGEITEMNUMBER)],
 							itrows: rows
 						});
 					}, cfg.DBCACHESECOND); //myquery(sqlstr, function (rows){
@@ -89,6 +92,10 @@
 			var start_time = Date.now();
 			var strsearch=(typeof(req.params.searchfor)=="string"?req.params.searchfor.replace(/[\/\-\\]/g,"").substring(0,50):void(0));
 			var strpage=(typeof(req.params.page)=="string"?parseInt(req.params.page):1);
+			if (strpage > 300) {
+				res.redirect("/404");
+				return;
+			}
 			
 			var countsqlstr = "SELECT topic_id FROM gcd_index WHERE MATCH(title) AGAINST ('"+strsearch+"')  LIMIT "+cfg.PAGEITEMNUMBER
 						+(strpage? " OFFSET "+(cfg.PAGEITEMNUMBER*(strpage-1)) : " ") + ";";
@@ -132,7 +139,10 @@
 		function(req, res){
 			var start_time = Date.now();
 			var strpage=(typeof(req.params.page)=="string"?parseInt(req.params.page):1);
-			
+			if (strpage > 300) {
+				res.redirect("/404");
+				return;
+			}
 			var countsqlstr = "SELECT count(*) AS itemcount FROM gcd_topic WHERE rank = 1 ;";
 			myquery(countsqlstr, function (rows) {
 				var itemcount = parseInt(rows[0]["itemcount"]);
@@ -156,7 +166,7 @@
 							title:  'index',
 							div: gcddiv,
 							pagecount: [strpage],
-							totalpage: [Math.ceil(itemcount/cfg.PAGEITEMNUMBER)],
+							totalpage: [300], //[Math.ceil(itemcount/cfg.PAGEITEMNUMBER)],
 							itrows: rows
 						});
 					}, cfg.DBCACHESECOND) //myquery(sqlstr, function (rows){
