@@ -31,12 +31,10 @@ int main() {
 	scws_res_t res, cur;
 	char *text = "123456789012345678901234567890Hello, 我名字叫李那曲是一个中国人, 我有时买Q币来玩, 我还听说过C#语言";
 	char instr[16000];
-	char* midp;
 	char outstr[15000];
 	int wordlen;
 	outstr[0] = '\0';
-	midp = instr + 30;
-
+	instr[0] = '\0';
 	if (!(s = scws_new())) {
 		printf("error, can't init the scws_t!\n");
 		exit(-1);
@@ -45,31 +43,24 @@ int main() {
 	scws_set_dict(s, "/usr/local/scws/etc/dict.utf8.xdb", SCWS_XDICT_XDB);
 	scws_set_rule(s, "/usr/local/scws/etc/rules.utf8.ini");
 	
-	while ((wordlen = getsline(instr,5000)) > 1) {
-		if (wordlen > 30) {
-			scws_send_text(s, midp, strlen(midp));
+	while (getsline(instr,5000) > 1) {
+			scws_send_text(s, instr, strlen(instr));
 			while (res = cur = scws_get_result(s))
 			{
 				while (cur != NULL)
 				{
 					if (cur->len + strlen(outstr) < 14000) {
-						scat(outstr,midp+cur->off,cur->len); 
+						scat(outstr,instr+cur->off,cur->len); 
 					}
 					cur = cur->next;
 				}
 				scws_free_result(res);
 			}
-			instr[30] = '\0';
-			strcat(instr,outstr);
-			printf("%s",instr);
+			printf("%s",outstr);
 			fflush(stdout);
 			sync();
 			instr[0] = '\0';
 			outstr[0] = '\0';
-		} else {
-			printf("%s",instr);
-			instr[0] = '\0';
-		}
 	}
 	scws_free(s);
 }
