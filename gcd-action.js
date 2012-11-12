@@ -105,50 +105,49 @@
 		
 		"/search/:searchfor.:page([0-9]+)?":	
 		function(req, res){
-			res.redirect("/404");
-			return;
 			var start_time = Date.now();
-			var strsearch=(typeof(req.params.searchfor)=="string"?req.params.searchfor.replace(/[\/\-\\]/g,"").substring(0,50):void(0));
+			var strsearch=(typeof(req.params.searchfor)=="string"?req.params.searchfor.replace(/[\/\-\\]/g,"").substring(0,80):void(0));
 			var strpage=(typeof(req.params.page)=="string"?parseInt(req.params.page):1);
 			if (strpage > 300) {
 				res.redirect("/404");
 				return;
 			}
-			
-			var countsqlstr = "SELECT topic_id FROM gcd_index WHERE MATCH(title) AGAINST ('"+strsearch+"')  LIMIT "+cfg.PAGEITEMNUMBER
-						+(strpage? " OFFSET "+(cfg.PAGEITEMNUMBER*(strpage-1)) : " ") + ";";
-			myquery(countsqlstr,function (rows) {
-				if(rows.length ==0){
-					res.render('search',{
-						starttime: start_time,
-						title: "SEARCH - "+strsearch,
-						searchfor: strsearch,
-						pagecount: [strpage],
-						totalpage: [1],
-						div: gcddiv,
-						itrows: []
-					});
-				}else{ //if(rows.length ==0){
-					var verycdids = [];
-					var rangestr = "";
-					for (ind in rows){
-						verycdids.push(rows[ind]["verycdid"]);
-					}
-					rangestr = "'"+verycdids.join("','")+"'";
-					//res.send(rangestr);
-					var sqlstr = "SELECT * FROM verycd WHERE del_flag = 0 AND  verycdid IN ("+rangestr+") ; ";
-					myquery(sqlstr, function (rows){
+			rl.question(strsearch+"\n", function(strseg){
+				var countsqlstr = "SELECT topic_id FROM gcd_search WHERE rank = 1 AND MATCH(title) AGAINST ('"+strseg.trim()+"')  LIMIT "+cfg.PAGEITEMNUMBER
+							+(strpage? " OFFSET "+(cfg.PAGEITEMNUMBER*(strpage-1)) : " ") + ";";
+				myquery(countsqlstr,function (rows) {
+					if(rows.length ==0){
 						res.render('search',{
 							starttime: start_time,
 							title: "SEARCH - "+strsearch,
 							searchfor: strsearch,
 							pagecount: [strpage],
+							totalpage: [1],
 							div: gcddiv,
-							totalpage: [strpage+2],
-							itrows: rows
+							itrows: []
 						});
-					}, cfg.DBCACHESECOND); //myquery(sqlstr, function (rows){
-				}// else{ //if(rows.length ==0){
+					}else{ //if(rows.length ==0){
+						var topic_ids = [];
+						var rangestr = "";
+						for (ind in rows){
+							topic_ids.push(rows[ind]["topic_id"]);
+						}
+						rangestr = "'"+topic_ids.join("','")+"'";
+						//res.send(rangestr);
+						var sqlstr = "SELECT * FROM gcd_topic WHERE topic_id IN ("+rangestr+") ; ";
+						myquery(sqlstr, function (rows){
+							res.render('search',{
+								starttime: start_time,
+								title: "SEARCH - "+strsearch,
+								searchfor: strsearch,
+								pagecount: [strpage],
+								div: gcddiv,
+								totalpage: [strpage+2],
+								itrows: rows
+							});
+						}, cfg.DBCACHESECOND); //myquery(sqlstr, function (rows){
+					}// else{ //if(rows.length ==0){
+				});
 			});
 		}, //function(req, res){
 		
