@@ -3,13 +3,8 @@
 	var myquery = gquery.gq;
 	var cfg = require('./config.js');
 	var gcddiv = require('./gcd-div.js');
-	var readline = require('readline');
-	var spawn = require('child_process').spawn;
-	var wordseg = spawn('./tools/searchseg');
-	var rl = readline.createInterface({
-		  input: wordseg.stdout,
-		  output: wordseg.stdin
-	});
+	var wordseg = require('./searchseg.node');
+	wordseg.init("");
 	module.exports = {
 		"/":	
 		function(req, res){
@@ -112,7 +107,7 @@
 				res.redirect("/404");
 				return;
 			}
-			rl.question(strsearch+"\n", function(strseg){
+			wordseg.segment(strsearch, function(strseg){
 				var countsqlstr = "SELECT topic_id FROM gcd_search WHERE rank = 1 AND MATCH(title) AGAINST ('"+strseg.trim()+"')  LIMIT "+cfg.PAGEITEMNUMBER
 							+(strpage? " OFFSET "+(cfg.PAGEITEMNUMBER*(strpage-1)) : " ") + ";";
 				myquery(countsqlstr,function (rows) {
