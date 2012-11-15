@@ -65,13 +65,15 @@
 			if (items) {
 				var relatedarr = [];
 				var matchrelated = items[6].match(regrelated);
-				var i = 0, len = matchrelated.length, reitem;
-				for (i = 0; i < len; i += 1) {
-					reitem = regrelated2.exec(matchrelated[i]);
-					relatedarr.push({
-						"topic_id" : 'SC' + reitem[2].trim(),
-						"title" : reitem[1].trim()
-					});
+				if (util.isArray(matchrelated)) {
+					var i = 0, len = matchrelated.length, reitem;
+					for (i = 0; i < len; i += 1) {
+						reitem = regrelated2.exec(matchrelated[i]);
+						relatedarr.push({
+							"topic_id" : 'SC' + reitem[2].trim(),
+							"title" : reitem[1].trim()
+						});
+					}
 				}
 				var sqlstr = "UPDATE `gcd_topic_imp_sc` SET " +
 					"`main_category` = '" + escap(items[1].trim()) + "', " +
@@ -93,32 +95,34 @@
 				var	groupcount = 0;
 				var group = [];
 				var matchlink = items[3].match(reglink);
-				len = matchlink.length;
-				for (i = 0; i < len; i += 1) {
-					reitem = reglink2.exec(matchlink[i]);
-					linkarr.push(reitem[1]);
-				}
-				if (len > 100) {
-					for (i = 0; i < len; i += 100) {
-						group.push(linkarr.slice(i,i + 100));
-						groupcount += 1;
+				if (util.isArray(matchlink)) {
+					len = matchlink.length;
+					for (i = 0; i < len; i += 1) {
+						reitem = reglink2.exec(matchlink[i]);
+						linkarr.push(reitem[1]);
 					}
-					groupfetch[items[4]] = [];
-					groupfetch[items[4]][0] = groupcount;
-					for (i = 1; i <= groupcount; i += 1) {
+					if (len > 100) {
+						for (i = 0; i < len; i += 100) {
+							group.push(linkarr.slice(i,i + 100));
+							groupcount += 1;
+						}
+						groupfetch[items[4]] = [];
+						groupfetch[items[4]][0] = groupcount;
+						for (i = 1; i <= groupcount; i += 1) {
+							c.queue([{
+								"uri" : 'http://simplecd.me/download/?seperate=copy&rid=' +
+										group[i-1].join('&rid=') + 
+										'&topicid=' + items[4] +
+										'&groupsi=' + i,
+								"callback" : parsehashlink
+							}]);
+						}
+					} else {
 						c.queue([{
-							"uri" : 'http://simplecd.me/download/?seperate=copy&rid=' +
-									group[i-1].join('&rid=') + 
-									'&topicid=' + items[4] +
-									'&groupsi=' + i,
+							"uri" : 'http://simplecd.me/download/?seperate=copy&rid=' + linkarr.join('&rid=') + '&topicid=' + items[4],
 							"callback" : parsehashlink
 						}]);
 					}
-				} else {
-					c.queue([{
-						"uri" : 'http://simplecd.me/download/?seperate=copy&rid=' + linkarr.join('&rid=') + '&topicid=' + items[4],
-						"callback" : parsehashlink
-					}]);
 				}
 				util.log(result.uri + " - " + result.statusCode + " - " + "parsed " + " - " + items[4]);
 			} else {
