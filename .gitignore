@@ -6,3 +6,4 @@ useless/
 package.json
 tools/node_modules/
 *~
+fetched/

@@ -9,9 +9,10 @@
 	var myqs = gquery.gqs;
 	var escap = gquery.escapes;
 	var MAX_RETRY = 10;
-	var table_name = 'gcd_entry';
+	var table_name = 'gcd_entry_test';
 	var retry_time = {};
 	var groupfetch = {};
+	var savefilepath = 'fetched/' + (new Date()).toJSON.substr(0,10) + '/SC/';
 	var regs = /<\/span>\s*?<span><a href="\/category\/\S+?\/">(\S*?)<\/a> &gt;\s*?<a href="\/category\/\S+?\/">(\S*?)<\/a><\/span>[\s\S]*?<tr><td class="needemule" colspan="3"><a href="http([\s\S]*?)<input type="checkbox" id="checkallemule" name="checkbox">[\s\S]*?<td class="post"><a target="_blank" href="\/search\/\?fromeid=(\w+?)&mode=relate">[\s\S]+?(<table class="description">[\s\S]*?<\/table>)\s*?<table class="ad-in-entry">[\s\S]*?<div class="ad-entry-sidebar-2">[\s\S]*?<table class="user-recommend">[\s\S]*?<\/table>[\s\S]*?<div class="ad-entry-sidebar-2">[\s\S]*?<table class="user-recommend">[\s\S]*?<\/table>[\s\S]*?<div class="ad-entry-sidebar-2">[\s\S]*?<table class="user-recommend">([\s\S]*?)<\/table>/;
 	var regrelated = /<tr><td class="cover"><img src="http[\s\S]*?title="([\s\S]*?)" \/><\/td><td><a href="\/entry\/(\S+?)">/g;
 	var regrelated2 = /<tr><td class="cover"><img src="http[\s\S]*?title="([\s\S]*?)" \/><\/td><td><a href="\/entry\/(\S+?)">/;
@@ -84,10 +85,15 @@
 				myquery(sqlstr, function (rows) {
 					util.log(result.uri + " - " + "update topic" + " - " + items[4]);
 				});
+				var filename = savefilepath + 'SC' + items[4].trim() + '.htm'; 
 				sqlstr = "UPDATE `" + table_name + "` SET " +
 					"`fetch_flag` = 1, " +
-					"`res_html` = '" + escap(result.body.toString().trim()) + "' "+
+					"`res_html` = '" + escap(filename) + "' " +
 					" WHERE topic_id = 'SC" + escap(items[4].trim()) + "' " ;
+				fs.writeFile(filename, result.body.toString().trim(), function (err) {
+					if (err) throw err;
+					util.log(result.uri + " - saved file - " + filename);
+				});
 				myquery(sqlstr, function (rows) {
 					util.log(result.uri + " - " + "update entry res_html" + " - " + items[4]);
 				});
