@@ -9,10 +9,13 @@
 	var myqs = gquery.gqs;
 	var escap = gquery.escapes;
 	var MAX_RETRY = 10;
-	var table_name = 'gcd_entry_test';
+	var table_name = 'gcd_entry';
 	var retry_time = {};
 	var groupfetch = {};
-	var savefilepath = 'fetched/' + (new Date()).toJSON.substr(0,10) + '/SC/';
+	var savefilepath = 'fetched/' + (new Date()).toJSON().substr(0,10) + '-SC/';
+	if (!fs.existsSync(savefilepath)) {
+		fs.mkdirSync(savefilepath);
+	}
 	var regs = /<\/span>\s*?<span><a href="\/category\/\S+?\/">(\S*?)<\/a> &gt;\s*?<a href="\/category\/\S+?\/">(\S*?)<\/a><\/span>[\s\S]*?<tr><td class="needemule" colspan="3"><a href="http([\s\S]*?)<input type="checkbox" id="checkallemule" name="checkbox">[\s\S]*?<td class="post"><a target="_blank" href="\/search\/\?fromeid=(\w+?)&mode=relate">[\s\S]+?(<table class="description">[\s\S]*?<\/table>)\s*?<table class="ad-in-entry">[\s\S]*?<div class="ad-entry-sidebar-2">[\s\S]*?<table class="user-recommend">[\s\S]*?<\/table>[\s\S]*?<div class="ad-entry-sidebar-2">[\s\S]*?<table class="user-recommend">[\s\S]*?<\/table>[\s\S]*?<div class="ad-entry-sidebar-2">[\s\S]*?<table class="user-recommend">([\s\S]*?)<\/table>/;
 	var regrelated = /<tr><td class="cover"><img src="http[\s\S]*?title="([\s\S]*?)" \/><\/td><td><a href="\/entry\/(\S+?)">/g;
 	var regrelated2 = /<tr><td class="cover"><img src="http[\s\S]*?title="([\s\S]*?)" \/><\/td><td><a href="\/entry\/(\S+?)">/;
