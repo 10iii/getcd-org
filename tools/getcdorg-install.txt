@@ -1,0 +1,28 @@
+sudo apt-get install python-software-properties
+sudo add-apt-repository ppa:chris-lea/node.js
+sudo apt-get update
+sudo apt-get install nodejs npm
+sudo apt-get install nodejs-dev
+apt-get install gcc g++ make
+apt-get install libmysqlclient-dev
+
+npm install mysql-libmysqlclient
+
+npm install crawler
+
+npm install hiredis redis
+
+npm install tenjin
+
+npm install express
+
+
+$ wget http://redis.googlecode.com/files/redis-2.6.4.tar.gz
+$ tar xzf redis-2.6.4.tar.gz
+$ cd redis-2.6.4
+$ make
+
+make test
+make install
+cd utils
+./install_server

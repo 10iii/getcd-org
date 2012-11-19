@@ -35,7 +35,7 @@ while($rows = fetchitem()){
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		
 		//$filename1 = "orithumb\\".$row["id"].".jpg";
-		$dirname = $datestr."/".substr($row["topic_id"],0,2)."/".substr($row["topic_id"],2,1);
+		$dirname = "fetched/thumb/".substr($row["topic_id"],0,2)."/".substr($row["topic_id"],2,1);
 		if(!is_dir($dirname)) {
 			mkdir($dirname,0777,true);
 		}
