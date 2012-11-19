@@ -5,6 +5,7 @@
 	var gquery = require('../gcd-query.js');
 	var fs = require("fs");
 	var myquery = gquery.gq;
+	var myqs = gquery.gqs;
 	var escap = gquery.escapes;
 	var regs = /<td class="cover-info">\s*?<a href="\/entry\/([a-zA-Z0-9]+?)\/">\s*?<img class="cover" src="(.+?)" \/><\/a>[\S\s]+?"><div class="title">([\S\s]+?)<\/div><\/a>\s*?<div class="abstract">([\S\s]+?)<\/div>\s*?<div class="description">([\S\s]+?)<\/div>\s*?<div class="datetime">\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<\/div>[\S\s]+?<td class="user-info">\s*?<img src='\S*?' title='([\S]+?)'/g;
 	var regs2 = /<td class="cover-info">\s*?<a href="\/entry\/([a-zA-Z0-9]+?)\/">\s*?<img class="cover" src="(.+?)" \/><\/a>[\S\s]+?"><div class="title">([\S\s]+?)<\/div><\/a>\s*?<div class="abstract">([\S\s]+?)<\/div>\s*?<div class="description">([\S\s]+?)<\/div>\s*?<div class="datetime">\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<b>\S*?<\/b>:<i>([\S\s]+?);<\/i>\s*?<\/div>[\S\s]+?<td class="user-info">\s*?<img src='\S*?' title='([\S]+?)'/;
@@ -21,11 +22,10 @@
 	var MAX_TIME = new Date('1990-01-01 00:00:00');
 	var MAX_PAGE = 20010;
 	var sqlstr = "SELECT MAX(updtime) as lasttime  FROM gcd_entry";
-	myquery(sqlstr,function (res) {
-		if (util.isArray(res)&&res[0]["lasttime"]) {
-			//MAX_TIME = res[0]["lasttime"];
-		}
-	});
+	var res = myqs(sqlstr);
+	if (res[0]["lasttime"]) {
+		MAX_TIME = res[0]["lasttime"];
+	}
 	console.log(MAX_TIME);
 	var c = new Crawler({
 		"maxConnections" : 2,
@@ -107,12 +107,10 @@
 			}
 		},
 		"onDrain" : function () {
-			if (addwork() === 0) {
 				setTimeout(function () {
 					util.log("DONE.");
 					process.exit();
 				},600000);
-			}
 		}
 	});
 

@@ -33,9 +33,9 @@
 		},
 		gqs : function (sqlstr) {
 			conn.realQuerySync(sqlstr);
-			var res = conn.storeResultSync();
+			var res = conn.useResultSync();
 			if (res.numRowsSync) {
-				return res;
+				return res.fetchAllSync();
 			} else {
 				return conn.affectedRowsSync();
 			}
