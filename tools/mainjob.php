@@ -29,4 +29,9 @@ shell_exec("cp -u -R fetched/thumb /www/img-getcd-org/ ");
 logout("finished copy thumb");
 
 
+logout("start to seg title for search.");
+shell_exec("php exp-title.php |./wordseg |php rep-title-seg.php");
+logout("finished seg title");
+
+
 ?>
