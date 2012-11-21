@@ -1,0 +1,77 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'nodejs', '/usr/bin/npm', 'install' ]
+2 info using npm@1.1.65
+3 info using node@v0.8.14
+4 verbose read json /www/getcd-org-dev/package.json
+5 verbose readDependencies using package.json deps
+6 verbose install where, deps [ '/www/getcd-org-dev', [ 'express', 'jade', 'plain' ] ]
+7 verbose from cache /www/getcd-org-dev/package.json
+8 info preinstall application-name@0.0.1
+9 verbose read json /www/getcd-org-dev/node_modules/mysql-libmysqlclient/package.json
+10 verbose read json /www/getcd-org-dev/node_modules/tenjin/package.json
+11 verbose read json /www/getcd-org-dev/node_modules/redis/package.json
+12 verbose read json /www/getcd-org-dev/node_modules/ejs/package.json
+13 verbose read json /www/getcd-org-dev/node_modules/express/package.json
+14 verbose read json /www/getcd-org-dev/node_modules/hiredis/package.json
+15 verbose read json /www/getcd-org-dev/node_modules/crawler/package.json
+16 verbose from cache /www/getcd-org-dev/package.json
+17 verbose readDependencies using package.json deps
+18 verbose read json /www/getcd-org-dev/node_modules/.bin/package.json
+19 verbose from cache /www/getcd-org-dev/node_modules/mysql-libmysqlclient/package.json
+20 verbose from cache /www/getcd-org-dev/node_modules/tenjin/package.json
+21 verbose from cache /www/getcd-org-dev/node_modules/redis/package.json
+22 verbose from cache /www/getcd-org-dev/node_modules/ejs/package.json
+23 verbose from cache /www/getcd-org-dev/node_modules/express/package.json
+24 verbose from cache /www/getcd-org-dev/node_modules/hiredis/package.json
+25 verbose from cache /www/getcd-org-dev/node_modules/crawler/package.json
+26 verbose already installed skipping express@3.0.3 /www/getcd-org-dev
+27 verbose cache add [ 'jade@*', null ]
+28 silly cache add name=undefined spec="jade@*" args=["jade@*",null]
+29 verbose parsed url { pathname: 'jade@*', path: 'jade@*', href: 'jade@*' }
+30 silly cache add name="jade" spec="*" args=["jade","*"]
+31 verbose parsed url { pathname: '*', path: '*', href: '*' }
+32 verbose addNamed [ 'jade', '*' ]
+33 verbose addNamed [ null, '' ]
+34 verbose cache add [ 'plain@*', null ]
+35 silly cache add name=undefined spec="plain@*" args=["plain@*",null]
+36 verbose parsed url { pathname: 'plain@*', path: 'plain@*', href: 'plain@*' }
+37 silly cache add name="plain" spec="*" args=["plain","*"]
+38 verbose parsed url { pathname: '*', path: '*', href: '*' }
+39 verbose addNamed [ 'plain', '*' ]
+40 verbose addNamed [ null, '' ]
+41 silly lockFile ad03ed78-jade jade@*
+42 verbose lock jade@* /root/.npm/ad03ed78-jade.lock
+43 silly lockFile 9f4f21d2-plain plain@*
+44 verbose lock plain@* /root/.npm/9f4f21d2-plain.lock
+45 silly addNameRange { name: 'jade', range: '', hasData: false }
+46 silly addNameRange { name: 'plain', range: '', hasData: false }
+47 verbose url raw jade
+48 verbose url resolving [ 'https://registry.npmjs.org/', './jade' ]
+49 verbose url resolved https://registry.npmjs.org/jade
+50 info trying registry request attempt 1 at 09:18:09
+51 http GET https://registry.npmjs.org/jade
+52 verbose url raw plain
+53 verbose url resolving [ 'https://registry.npmjs.org/', './plain' ]
+54 verbose url resolved https://registry.npmjs.org/plain
+55 info trying registry request attempt 1 at 09:18:09
+56 http GET https://registry.npmjs.org/plain
+57 http 404 https://registry.npmjs.org/plain
+58 silly registry.get cb [ 404,
+58 silly registry.get   { server: 'CouchDB/1.2.0 (Erlang OTP/R15B)',
+58 silly registry.get     date: 'Wed, 21 Nov 2012 09:17:32 GMT',
+58 silly registry.get     'content-type': 'application/json',
+58 silly registry.get     'content-length': '52',
+58 silly registry.get     'cache-control': 'must-revalidate' } ]
+59 silly lockFile 9f4f21d2-plain plain@*
+60 error 404 'plain' is not in the npm registry.
+60 error 404 You should bug the author to publish it
+60 error 404
+60 error 404 Note that you can also install from a
+60 error 404 tarball, folder, or http url, or git url.
+61 error System Linux 3.2.0-24-virtual
+62 error command "nodejs" "/usr/bin/npm" "install"
+63 error cwd /www/getcd-org-dev
+64 error node -v v0.8.14
+65 error npm -v 1.1.65
+66 error code E404
+67 verbose exit [ 1, true ]

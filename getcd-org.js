@@ -7,25 +7,28 @@
 	 */
 
 	var express = require('express')
-	, routes = require('./routes')
-	, user = require('./routes/user')
+//	, routes = require('./routes')
+//	, user = require('./routes/user')
 	, http = require('http')
 	, path = require('path');
 
+	var tenjin = require('tenjin');
 	var app = express();
 
 	app.configure(function(){
 		app.set('port', process.env.PORT || cfg.listenport);
 		app.set('views', __dirname + '/views');
-		app.set('view engine', 'hjs');
+		//app.set('view engine', 'ejs');
+		app.set("view engine", "html");
+		app.engine('html', tenjin.renderFile);
 		app.use(express.favicon());
 		app.use(express.logger('dev'));
 		app.use(express.bodyParser());
 		app.use(express.methodOverride());
 		app.use(express.cookieParser('your secret here'));
 		app.use(express.session());
-		app.use(app.router);
 		app.use(express.static(path.join(__dirname, 'public')));
+		app.use(app.router);
 	});
 
 	app.configure('development', function(){
