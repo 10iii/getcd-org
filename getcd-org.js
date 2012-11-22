@@ -21,12 +21,18 @@
 		//app.set('view engine', 'ejs');
 		app.set("view engine", "html");
 		app.engine('html', tenjin.renderFile);
-		app.use(express.favicon());
+		app.enable('trust proxy');
+		//app.use(express.favicon());
 		app.use(express.logger('dev'));
 		app.use(express.bodyParser());
 		app.use(express.methodOverride());
-		app.use(express.cookieParser('your secret here'));
-		app.use(express.session());
+		app.use(express.cookieParser('getcd.org!' + cfg.host));
+		//app.use(express.session());
+		app.use(express.cookieSession({ 
+			secret: 'getcd.org@' + cfg.host
+			, cookie: { maxAge: 60 * 60 * 1000 }
+			, proxy:true
+		}));
 		app.use(express.static(path.join(__dirname, 'public')));
 		app.use(app.router);
 	});
