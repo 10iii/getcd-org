@@ -764,6 +764,24 @@ img.alignleft {
 .ad125x125 img {
 	border: none;
 }
+.ad100x100 {
+	background: #fff;
+	width: 100px;
+	height: 100px;
+	margin: 0px 0px 10px 0px;
+}
+.ad100x100 img {
+	border: none;
+}
+.ad150x100 {
+	background: #fff;
+	width: 150px;
+	height: 100px;
+	margin: 0px 0px 10px 0px;
+}
+.ad150x100 img {
+	border: none;
+}
 /*******************
 *	WIDGETS		   *
 ********************/
@@ -1123,6 +1141,8 @@ a.addFavModule_a{display:block;width:120px;height:30px;}
 
 .gcdthumbdiv  img{
 	max-width:120px;
+	min-width:100px;
+	min-height:100px;
 	overflow:hidden; 
 }
 
@@ -1316,4 +1336,27 @@ display: inline;
 
 /* End emule*/
 
+/*
+ * Default style for WP-PageNavi plugin
+ *
+ * http://wordpress.org/extend/plugins/wp-pagenavi/
+ * */
 
+.wp-pagenavi {
+	clear: both;
+}
+
+.wp-pagenavi a, .wp-pagenavi span {
+	text-decoration: none;
+	border: 1px solid #BFBFBF;
+	padding: 3px 5px;
+	margin: 2px;
+}
+
+.wp-pagenavi a:hover, .wp-pagenavi span.current {
+	border-color: #000;
+}
+
+.wp-pagenavi span.current {
+	font-weight: bold;
+}
