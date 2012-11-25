@@ -1,4 +1,7 @@
-ï»¿/*   
+/*   
+	Theme Name: Freshblog
+	Theme URI: http://www.bestwp.net
+/*   
 	Theme Name: Freshblog
 	Theme URI: http://www.bestwp.net
 	Description: A clear, clean and flexible theme
@@ -761,6 +764,24 @@ img.alignleft {
 .ad125x125 img {
 	border: none;
 }
+.ad100x100 {
+	background: #fff;
+	width: 100px;
+	height: 100px;
+	margin: 0px 0px 10px 0px;
+}
+.ad100x100 img {
+	border: none;
+}
+.ad150x100 {
+	background: #fff;
+	width: 150px;
+	height: 100px;
+	margin: 0px 0px 10px 0px;
+}
+.ad150x100 img {
+	border: none;
+}
 /*******************
 *	WIDGETS		   *
 ********************/
@@ -1120,6 +1141,8 @@ a.addFavModule_a{display:block;width:120px;height:30px;}
 
 .gcdthumbdiv  img{
 	max-width:120px;
+	min-width:100px;
+	min-height:100px;
 	overflow:hidden; 
 }
 
@@ -1221,7 +1244,7 @@ display: inline;
     /*background: url(/ipb_images/2/css_img_emule01.gif) no-repeat right #e9e9e9;*/
     border-left: 4px solid #a7a6a6;
 }
-/*dy æ— è¡¥å……èµ„æºæ ·å¼*/
+/*dy ÎŞ²¹³ä×ÊÔ´ÑùÊ½*/
 .emuletop-no {
     clear:both;
     background:#EFEFEF;
@@ -1229,7 +1252,7 @@ display: inline;
     color:#999;
     padding:5px 0 5px 0;
 }
-/*dy æ— è¯„è®ºæ ·å¼*/
+/*dy ÎŞÆÀÂÛÑùÊ½*/
 #criticism0,#global_topic_user_id_criticism1{
     clear:both;
     text-align:center;
@@ -1240,7 +1263,7 @@ display: inline;
     margin-top:10px;
     margin-bottom:10px;
  }
-/*dy èµ„æºé¡µè¯„è®ºé¡µç”¨æˆ·æƒé™*/
+/*dy ×ÊÔ´Ò³ÆÀÂÛÒ³ÓÃ»§È¨ÏŞ*/
 .global_topic_user_purview{text-align:center; padding:20px 0 20px 0;border:1px solid #cccccc; color:#999999;}
 
 .emulemain {
@@ -1313,3 +1336,27 @@ display: inline;
 
 /* End emule*/
 
+/*
+ * Default style for WP-PageNavi plugin
+ *
+ * http://wordpress.org/extend/plugins/wp-pagenavi/
+ * */
+
+.wp-pagenavi {
+	clear: both;
+}
+
+.wp-pagenavi a, .wp-pagenavi span {
+	text-decoration: none;
+	border: 1px solid #BFBFBF;
+	padding: 3px 5px;
+	margin: 2px;
+}
+
+.wp-pagenavi a:hover, .wp-pagenavi span.current {
+	border-color: #000;
+}
+
+.wp-pagenavi span.current {
+	font-weight: bold;
+}

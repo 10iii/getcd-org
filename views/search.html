@@ -1,4 +1,5 @@
-﻿<?js
+﻿<?js include('layout-head.html') ?>
+<?js
 if (it.pagecount.toString().length == 0){
 	it.pagecount = [1];
 }
@@ -8,14 +9,13 @@ var thispagelink = '/search/'+it.searchfor;
 <form method="get" id="mainsearchform" onsubmit="location.href='/search/'+$('#mains').val();return false;" >
 <div id="searchbox">
 	<p class="browse">
-            <input class="searchinputmain" value="Search..." onclick="this.value='';" name="mains" id="mains" type="text">
+	<input class="searchinputmain" name="mains" id="mains" type="text" value="#{it.searchfor}" >
             <input class="searchsubmitmain" value="搜索 / SEARCH" type="submit">
         
 	</p>
 </div>
 </form>
 	  <!-- You can start editing here. -->
-</div><!--end: content-->
  <div class="clear"></div>
 
 <div id="col1">
@@ -24,7 +24,7 @@ var itemrows = it.itrows;
 if ((typeof(itemrows)!="undefined")&&(itemrows.length>0)){
 	for (var ind=0;ind<itemrows.length;ind++){
 ?>
-#{it.div(it.itrows[ind])}
+<?js include('list-item.html'); ?>
 <?js
 	} //for (ind in itrows)
 }else{ //if ((typeof(it.itrows)=="array")&&(it.itrows.length>0))
@@ -79,31 +79,28 @@ if ((typeof(itemrows)!="undefined")&&(itemrows.length>0)){
 </div> <!--end .pagination-->	
 </div><!--end: col1-->
 
+</div><!--end: content-->
 <div id="sidebar">
-<!--
-	<div class="adblock">
-	
- 	<div class="left">
-		<div class="ad125x125"><a target="_blank" href="http://www.getcd.org/go/pagelines"><img src="Freshblog%20%C2%BB%20Taking%20A%20Look%20At%20The%20New%20Features%20In%20CSS%20Edit_files/125x125_Redesigned.jpg" alt="Platform Drag and Drop Design Framework for WordPress" border="0"></a></div>
-		<div class="ad125x125"><a target="_blank" href="http://www.getcd.org/go/thesis"><img src="Freshblog%20%C2%BB%20Taking%20A%20Look%20At%20The%20New%20Features%20In%20CSS%20Edit_files/thesis-125x125-1.png" alt="How smart is your Theme?  How good is your support? Check out ThesisTheme for WordPress." border="0"></a></div>
-    </div>
-    <div class="right">
-		<div class="ad125x125"><a target="_blank" href="http://www.getcd.org/go/headwaythemes"><img src="Freshblog%20%C2%BB%20Taking%20A%20Look%20At%20The%20New%20Features%20In%20CSS%20Edit_files/125x125_wb.png" alt="No Need For WordPress Developers — Drag &amp; Drop With Headway" border="0"></a></div>
-		<div class="ad125x125"><a target="_blank" href="http://www.getcd.org/go/solostream"><img src="Freshblog%20%C2%BB%20Taking%20A%20Look%20At%20The%20New%20Features%20In%20CSS%20Edit_files/solo-banner-125-2.gif" alt="solostream premium wordpress theme"></a></div>
-    </div>
-	
-    <div class="clear"></div>
-</div> --> <!--end: adblock-->
 	<div class="fullwidget">
     	<h3>热门资源</h3><div class="clear"></div>
-		<!-- <div class="box">
-			<ul>
-				
-				<li></li>
-			
-			</ul>
+		<div class="box">
+			<?js
+			it.hotboard.forEach(function (item) {
+			?>
+			<div class="adblock">
+				<div class="left ad100x100">
+					<a href="/topic/${item.id}" title="${item.id} | ${item.t}">
+					<img src="http://img.getcd.org/t/#{item.id}.jpg" /></a>
+				</div>
+				<div class="right ad150x100">
+					<a href="/topic/${item.id}" title="${item.id} | ${item.t}">
+					${item.t}</a>
+				</div>
+			</div>
+			<?js
+			}); //forEach
+			?>
 		</div>
-		-->
 	</div> <!--end: fullwidget-->
 	<!--
   	<div class="leftwidget">
@@ -121,3 +118,4 @@ if ((typeof(itemrows)!="undefined")&&(itemrows.length>0)){
 </div>
 </div> --> <!--end: rightwidget-->
 </div> <!--end: sidebar-->
+<?js include('layout-foot.html') ?>

@@ -24,6 +24,7 @@
 	result = conn.storeResultSync();
 
 	var gquery = {
+		gred : redclient,
 		escapes : function (raw) {
 			if (typeof(raw) === "undefined") {
 				return '';

@@ -2,10 +2,57 @@
 	var gquery =require('./gcd-query.js');
 	var myquery = gquery.gq;
 	var escap = gquery.escapes;
+	var gred = gquery.gred;
 	var cfg = require('./config.js');
-	var gcddiv = require('./gcd-div.js');
 	var wordseg = require('./searchseg.node');
 	wordseg.init("");
+	var usehotboardkey = function (key, fn) {
+		gred.exists(key, function (err, rep) {
+			if (rep === 0) {
+				var yesterday = new Date(Date.parse(key.substr(4, 10)) - 86400000);
+				var yesterdaystr = yesterday.toJSON().substr(0,10);
+				var oldkey = 'hot:' + yesterdaystr + key.substr(14);
+				gred.zunionstore(key, 1, oldkey, 'WEIGHTS', 0.618, 'AGGREGATE', 'SUM', function (err,rep) {
+					gred.expire(key, 172800000);
+				});
+			}
+			fn();
+		});
+	};
+	var inserthotboard = function (topic_id, title, main_cate, sub_cate) {
+		main_cate = main_cate || '';
+		sub_cate = sub_cate || '';
+		var item = JSON.stringify({
+			"id": topic_id,
+			"t": title
+		});
+		var todaystr = (new Date()).toJSON().substr(0,10);
+		var indexkey = ['hot', todaystr, 'index'].join(':');
+		var mckey = ['hot', todaystr, main_cate].join(':');
+		var sckey = ['hot', todaystr, main_cate, sub_cate].join(':');
+		usehotboardkey(indexkey, function () {
+			gred.zincrby(indexkey, 1, item);
+		});
+		usehotboardkey(mckey, function () {
+			gred.zincrby(mckey, 1, item);
+		});
+		usehotboardkey(sckey, function () {
+			gred.zincrby(sckey, 1, item);
+		});
+		return;
+	};
+	var gethotboard = function (type, count, callb) {
+		var key = ['hot', (new Date()).toJSON().substr(0,10), type].join(':');
+		gred.zrevrange(key, 0, count, function (err, rep) {
+			var resarr = [];
+			if (!!rep) {
+				rep.forEach(function (el) {
+					resarr.push(JSON.parse(el));
+				});
+			}
+			callb(resarr);
+		});
+	};
 	module.exports = {
 		"/":	
 		function(req, res){
@@ -67,16 +114,18 @@
 				+(strpage? " OFFSET "+(cfg.PAGEITEMNUMBER*(strpage-1)) : " ")
 				+";";
 			myquery(sqlstr, function (rows){
-				var hasresult = rows.length > 0;
-				res.render('category',{
-					starttime:start_time,
-					title: strcate1 + (strcate2 ? '/'+strcate2 : ''),
-					main_category: [strcate1],
-					sub_category: [strcate2],
-					div: gcddiv,
-					pagecount: [strpage],
-					totalpage: hasresult ? [cfg.MAXPAGENUMBER] : [1], //[Math.ceil(itemcount/cfg.PAGEITEMNUMBER)],
-					itrows: hasresult ? rows : []
+				gethotboard(strcate1 + (strcate2 ? ':' + strcate2 : ''), 20, function (hb) {
+					var hasresult = rows.length > 0;
+					res.render('category',{
+						starttime:start_time,
+						title: strcate1 + (strcate2 ? '/'+strcate2 : ''),
+						main_category: [strcate1],
+						sub_category: [strcate2],
+						hotboard: hb,
+						pagecount: [strpage],
+						totalpage: hasresult ? [cfg.MAXPAGENUMBER] : [1], //[Math.ceil(itemcount/cfg.PAGEITEMNUMBER)],
+						itrows: hasresult ? rows : []
+					});
 				});
 			}, cfg.DBCACHESECOND); //myquery(sqlstr, function (rows){
 		}, //function(req, res){
@@ -96,14 +145,16 @@
 							+(strpage? " OFFSET "+(cfg.PAGEITEMNUMBER*(strpage-1)) : " ") + ";";
 				myquery(countsqlstr,function (rows) {
 					if(rows.length ==0){
-						res.render('search',{
-							starttime: start_time,
-							title: "SEARCH - "+strsearch,
-							searchfor: strsearch,
-							pagecount: [strpage],
-							totalpage: [1],
-							div: gcddiv,
-							itrows: []
+						gethotboard('index', 20, function (hb) {
+							res.render('search',{
+								starttime: start_time,
+								title: "SEARCH - "+strsearch,
+								hotboard: hb,
+								searchfor: strsearch,
+								pagecount: [strpage],
+								totalpage: [1],
+								itrows: []
+							});
 						});
 					}else{ //if(rows.length ==0){
 						var topic_ids = [];
@@ -115,14 +166,16 @@
 						//res.send(rangestr);
 						var sqlstr = "SELECT * FROM gcd_topic WHERE topic_id IN ("+rangestr+") ; ";
 						myquery(sqlstr, function (rows){
-							res.render('search',{
-								starttime: start_time,
-								title: "SEARCH - "+strsearch,
-								searchfor: strsearch,
-								pagecount: [strpage],
-								div: gcddiv,
-								totalpage: [strpage+2],
-								itrows: rows
+							gethotboard('index', 20, function (hb) {
+								res.render('search',{
+									starttime: start_time,
+									title: "SEARCH - "+strsearch,
+									searchfor: strsearch,
+									hotboard: hb,
+									pagecount: [strpage],
+									totalpage: [strpage+2],
+									itrows: rows
+								});
 							});
 						}, cfg.DBCACHESECOND); //myquery(sqlstr, function (rows){
 					}// else{ //if(rows.length ==0){
@@ -144,14 +197,16 @@
 				+(strpage? " OFFSET "+(cfg.PAGEITEMNUMBER*(strpage-1)) : " ")
 				+";";
 			myquery(sqlstr, function (rows){
-				var hasresult = rows.length > 0;
-				res.render('index',{
-					starttime: start_time,
-					title: '把CD排排好!',
-					div: gcddiv,
-					pagecount: [strpage],
-					totalpage: hasresult? [cfg.MAXPAGENUMBER] : [1], //[Math.ceil(itemcount/cfg.PAGEITEMNUMBER)],
-					itrows: hasresult? rows : []
+				gethotboard('index', 20, function (hb) {
+					var hasresult = rows.length > 0;
+					res.render('index',{
+						starttime: start_time,
+						title: '把CD排排好!',
+						hotboard: hb, 
+						pagecount: [strpage],
+						totalpage: hasresult? [cfg.MAXPAGENUMBER] : [1], //[Math.ceil(itemcount/cfg.PAGEITEMNUMBER)],
+						itrows: hasresult? rows : []
+					});
 				});
 			}, cfg.DBCACHESECOND) //myquery(sqlstr, function (rows){
 		}, //function(req, res){
@@ -163,8 +218,10 @@
 			myquery("SELECT * FROM gcd_topic WHERE rank = 1 AND topic_id = '"+req.params.id+"'; "
 				, function (rows) {
 					if (rows.length == 1){
-						rows[0]["starttime"] = start_time;
-						res.render('topic',rows[0]);
+						var result = rows[0];
+						inserthotboard(result['topic_id'], result['title'], result['main_category'], result['sub_category']);
+						result['starttime'] = start_time;
+						res.render('topic', result);
 						//res.json(rows[0]);
 					}else{
 						res.redirect('/404');

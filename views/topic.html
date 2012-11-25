@@ -1,4 +1,7 @@
-﻿<script type="text/javascript" src="/javascripts/topic.js"></script>
+﻿<?js include('layout-head.html') ?>
+<link rel="stylesheet" type="text/css" href="/stylesheets/thickbox.css" media="screen">
+<script async type="text/javascript" src="/javascripts/thickbox-compressed.js"></script>
+<script type="text/javascript" src="/javascripts/topic.js"></script>
 
 <div id="content">
     <p class="browse">
@@ -227,23 +230,9 @@
   </div>
 <!--end: content-->
 <div id="sidebar">
-	<div class="adblock">
-	<!--
- 	<div class="left">
-		<div class="ad125x125"><a target="_blank" href="http://www.getcd.org/go/pagelines"><img src="Freshblog%20%C2%BB%20Taking%20A%20Look%20At%20The%20New%20Features%20In%20CSS%20Edit_files/125x125_Redesigned.jpg" alt="Platform Drag and Drop Design Framework for WordPress" border="0"></a></div>
-		<div class="ad125x125"><a target="_blank" href="http://www.getcd.org/go/thesis"><img src="Freshblog%20%C2%BB%20Taking%20A%20Look%20At%20The%20New%20Features%20In%20CSS%20Edit_files/thesis-125x125-1.png" alt="How smart is your Theme?  How good is your support? Check out ThesisTheme for WordPress." border="0"></a></div>
-    </div>
-    <div class="right">
-		<div class="ad125x125"><a target="_blank" href="http://www.getcd.org/go/headwaythemes"><img src="Freshblog%20%C2%BB%20Taking%20A%20Look%20At%20The%20New%20Features%20In%20CSS%20Edit_files/125x125_wb.png" alt="No Need For WordPress Developers — Drag &amp; Drop With Headway" border="0"></a></div>
-		<div class="ad125x125"><a target="_blank" href="http://www.getcd.org/go/solostream"><img src="Freshblog%20%C2%BB%20Taking%20A%20Look%20At%20The%20New%20Features%20In%20CSS%20Edit_files/solo-banner-125-2.gif" alt="solostream premium wordpress theme"></a></div>
-    </div>
-	-->
-    <div class="clear"></div>
-</div> <!--end: adblock-->
 	<div class="fullwidget">
     	<h3>相关资源</h3><div class="clear">
 		</div><div class="box">
-			<ul>
 				<?js
 				var relateditems = [], tmprelated = [];
 				if (it.res_site === 'VC') {
@@ -261,13 +250,21 @@
 				} else {
 					relateditems = JSON.parse(it.related);
 				}
-				for (item in relateditems){
+				relateditems.forEach(function (item) {
 				?>
-				<li><a href="/topic/${relateditems[item].topic_id}" title="${relateditems[item].topic_id} | ${relateditems[item].title}">${relateditems[item].title}</a></li>
+			<div class="adblock">
+				<div class="left ad100x100">
+					<a href="/topic/${item.topic_id}" title="${item.topic_id} | ${item.title}">
+					<img src="http://img.getcd.org/t/#{item.topic_id}.jpg" /></a>
+				</div>
+				<div class="right ad150x100">
+					<a href="/topic/${item.topic_id}" title="${item.topic_id} | ${item.title}">
+					${item.title}</a>
+				</div>
+			</div>
 				<?js
-				}; //for (item in relateditems)
+				}); //for (item in relateditems)
 				?>
-			</ul>
 		</div>
 	</div> <!--end: fullwidget-->
 	<!--
@@ -286,3 +283,4 @@
 </div>
 </div> --> <!--end: rightwidget-->
 </div> <!--end: sidebar-->
+<?js include('layout-foot.html') ?>
