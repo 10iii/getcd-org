@@ -11,7 +11,6 @@
     "crawler": "*",
     "hiredis": "*",
     "redis": "*",
-    "ejs": "*",
     "tenjin": "~0.1.1"
   },
   "readmeFilename": "README",
