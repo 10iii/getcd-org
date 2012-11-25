@@ -6,12 +6,11 @@
     "start": "node app"
   },
   "dependencies": {
-    "express": "3.0.3",
+    "express": "3.*",
     "mysql-libmysqlclient": "*",
     "crawler": "*",
     "hiredis": "*",
     "redis": "*",
-    "ejs": "*",
     "tenjin": "~0.1.1"
   },
   "readmeFilename": "README",
