@@ -9,7 +9,7 @@ var thispagelink = '/search/'+it.searchfor;
 <form method="get" id="mainsearchform" onsubmit="location.href='/search/'+$('#mains').val();return false;" >
 <div id="searchbox">
 	<p class="browse">
-            <input class="searchinputmain" value="Search..." onclick="this.value='';" name="mains" id="mains" type="text">
+	<input class="searchinputmain" name="mains" id="mains" type="text" value="#{it.searchfor}" >
             <input class="searchsubmitmain" value="搜索 / SEARCH" type="submit">
         
 	</p>

@@ -145,13 +145,16 @@
 							+(strpage? " OFFSET "+(cfg.PAGEITEMNUMBER*(strpage-1)) : " ") + ";";
 				myquery(countsqlstr,function (rows) {
 					if(rows.length ==0){
-						res.render('search',{
-							starttime: start_time,
-							title: "SEARCH - "+strsearch,
-							searchfor: strsearch,
-							pagecount: [strpage],
-							totalpage: [1],
-							itrows: []
+						gethotboard('index', 20, function (hb) {
+							res.render('search',{
+								starttime: start_time,
+								title: "SEARCH - "+strsearch,
+								hotboard: hb,
+								searchfor: strsearch,
+								pagecount: [strpage],
+								totalpage: [1],
+								itrows: []
+							});
 						});
 					}else{ //if(rows.length ==0){
 						var topic_ids = [];
