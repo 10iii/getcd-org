@@ -1,0 +1,33 @@
+{
+  "name": "getcd-org",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app"
+  },
+  "dependencies": {
+    "express": "3.0.3",
+    "mysql-libmysqlclient": "*",
+    "crawler": "*",
+    "hiredis": "*",
+    "redis": "*",
+    "ejs": "*",
+    "tenjin": "~0.1.1"
+  },
+  "readmeFilename": "README",
+  "description": "This site is a clone of verycd, database get form simplecd. It is base on node.js.",
+  "main": "getcd-org.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/10iii/getcd-org.git"
+  },
+  "keywords": [
+    "hash",
+    "ed2k",
+    "emule",
+    "link"
+  ],
+  "author": "10iii",
+  "license": "BSD"
+}
