@@ -121,6 +121,28 @@ function download(str, i, first) {
 	var a = document.getElementsByName(str);
 	var n = a.length;
 
+	//尝试使用activex方式批量新增下载
+	try {
+		var ed2k_links = '';
+		var ax = new ActiveXObject("IE2EM.IE2EMUrlTaker");
+		var emule_version = ax.GetEmuleVersion();
+		if ('e' != emule_version.substr(0,1)) {
+			throw {errorCode:'eMule not Installed.'};
+		}
+		for (var i = i; i < n; i++) {
+			if(a[i].checked) {
+				if (ed2k_links=='') {
+					ed2k_links = a[i].value;
+				} else {
+					ed2k_links += "\n"+a[i].value;
+				}
+			}
+		}
+		ax.SendUrl(ed2k_links, 'dd', document.location);
+		delete ax;
+		return;
+	} catch (e) {}
+
 	if (!window.continueDown) {
 		//使用最旧的方法来批量新增下载
 		for (var i = i; i < n; i++) {
