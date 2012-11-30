@@ -24,7 +24,7 @@
 	var sqlstr = "SELECT MAX(updtime) as lasttime  FROM gcd_entry";
 	var res = myqs(sqlstr);
 	if (res[0]["lasttime"]) {
-		MAX_TIME = res[0]["lasttime"];
+		MAX_TIME = new Date(res[0]["lasttime"].toUTCString() + '+0800');
 	}
 	console.log(MAX_TIME);
 	var c = new Crawler({
