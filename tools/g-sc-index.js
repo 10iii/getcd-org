@@ -21,10 +21,14 @@
 	};
 	var MAX_TIME = new Date('1990-01-01 00:00:00');
 	var MAX_PAGE = 20010;
-	var sqlstr = "SELECT MAX(updtime) as lasttime  FROM gcd_entry";
-	var res = myqs(sqlstr);
-	if (res[0]["lasttime"]) {
-		MAX_TIME = new Date(res[0]["lasttime"].toUTCString() + '+0800');
+	if (process.argv[2]) {
+		MAX_TIME = new Date(process.argv[2]);
+	} else {
+		var sqlstr = "SELECT MAX(updtime) as lasttime  FROM gcd_entry";
+		var res = myqs(sqlstr);
+		if (res[0]["lasttime"]) {
+			MAX_TIME = new Date(res[0]["lasttime"].toUTCString() + '+0800');
+		}
 	}
 	console.log(MAX_TIME);
 	var c = new Crawler({
