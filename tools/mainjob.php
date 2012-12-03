@@ -9,7 +9,14 @@ logout("main job start.");
 echo shell_exec("cd /www/getcd-org/tools");
 
 logout("start to fetch SC index.");
-echo shell_exec("node g-sc-index.js > sc-ind-log~ 2>&1");
+$today = getdate();
+if ($today['wday'] == 1) {
+	$date = new DateTime();
+	$date->sub(new DateInterval('P10D'));
+	echo shell_exec("node g-sc-index.js ".$date->format('Y-m-d')." > sc-ind-log~ 2>&1");
+} else {
+	echo shell_exec("node g-sc-index.js > sc-ind-log~ 2>&1");
+}
 logout("finished fetch SC index.");
 
 logout("start to fetch SC detail.");
