@@ -19,14 +19,14 @@
     <div class="topicImg">
 	    <a title="${it.title}" href="/topic/${it.topic_id}" id="topicImgUrl">
 		<?js
-			var formattime = function (dtstr) {
-				var dt = new Date(dtstr.toString().replace('Z','+08:00'));
-				var res = '' +  dt.getFullYear()+'-'+
-						((dt.getMonth()+1)>9?'':'0')+(dt.getMonth()+1)+'-'+
-						(dt.getDate()>9?'':'0')+dt.getDate()+' '+
-						dt.getHours()+':'+dt.getMinutes()+':'+dt.getSeconds();
-				return res;
-			}
+			//var formattime = function (dtstr) {
+			//	var dt = new Date(dtstr.toString().replace('Z','+08:00'));
+			//	var res = '' +  dt.getFullYear()+'-'+
+			//			((dt.getMonth()+1)>9?'':'0')+(dt.getMonth()+1)+'-'+
+			//			(dt.getDate()>9?'':'0')+dt.getDate()+' '+
+			//			dt.getHours()+':'+dt.getMinutes()+':'+dt.getSeconds();
+			//	return res;
+			//}
 
 	    //var imgurlreg = RegExp('<img .*?\>','i').exec(it.content);
 	    //var srcstrreg = imgurlreg?RegExp('src=.+?[\\s"\']','i').exec(imgurlreg[0]):null;
