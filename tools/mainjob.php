@@ -41,8 +41,8 @@ echo shell_exec("php exp-title.php |./wordseg |php rep-title-seg.php");
 logout("finished seg title");
 
 logout("start to generate sitemap.");
-echo shell_exec("php gen_sitemap_num.php");
-echo shell_exec("php gen_sitemap_ind.php > ../public/docs/sitemap-index.xml");
+echo shell_exec("php gen-sitemap-num.php");
+echo shell_exec("php gen-sitemap-ind.php > ../public/docs/sitemap-index.xml");
 logout("finished generate sitemap.");
 
 ?>
