@@ -6,3 +6,5 @@ useless/
 tools/node_modules/
 *~
 fetched/
+sitemaps/
+sitemap*
