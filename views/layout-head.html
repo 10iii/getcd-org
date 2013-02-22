@@ -148,7 +148,7 @@
 <!--end: menu-->
 <?js
 	var formattime = function (dtstr) {
-		var dt = new Date(dtstr.replace('Z','+08:00'));
+		var dt = new Date(dtstr.toString().replace('Z','+08:00'));
 		var res = '' + dt.getFullYear()+'-'+
 				((dt.getMonth()+1)>9?'':'0')+(dt.getMonth()+1)+'-'+
 				(dt.getDate()>9?'':'0')+dt.getDate()+' '+
