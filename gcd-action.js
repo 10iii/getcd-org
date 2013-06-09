@@ -146,7 +146,6 @@
 							+" AND MATCH(title) AGAINST ('"
 							+escap(strseg.trim())+"')  LIMIT "+cfg.PAGEITEMNUMBER
 							+(strpage? " OFFSET "+(cfg.PAGEITEMNUMBER*(strpage-1)) : " ") + ";";
-			console.log(countsqlstr);
 				myquery(countsqlstr,function (rows) {
 					if(rows.length ==0){
 						gethotboard('index', 20, function (hb) {
