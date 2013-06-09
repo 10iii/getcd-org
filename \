@@ -106,13 +106,31 @@
 				return;
 			}
 			var sqlstr="";
-			sqlstr = "SELECT * FROM gcd_topic USE INDEX ("
-				+(strcate2?"ind_rank_main_sub_upd":"ind_rank_main_upd")
-				+") WHERE rank = 1 AND main_category = '"+strcate1+"' "
-				+(strcate2?" AND sub_category = '"+strcate2+"' ":" ")
-				+" ORDER BY updtime DESC LIMIT "+cfg.PAGEITEMNUMBER
-				+(strpage? " OFFSET "+(cfg.PAGEITEMNUMBER*(strpage-1)) : " ")
-				+";";
+			if (strpage > cfg.LIMPAGENUMBER) {
+				sqlstr = "SELECT * FROM gcd_topic USE INDEX ("
+					+(strcate2?"ind_rank_main_sub_upd":"ind_rank_main_upd")
+					+") WHERE rank = 1 AND main_category = '"+strcate1+"' "
+					+(strcate2?" AND sub_category = '"+strcate2+"' ":" ")
+					+" AND topic_seq < (SELECT"+
+					+"MAX(topic_seq) * (SELECT (1 - " + (cfg.PAGEITEMNUMBER * (strpage - 1)).toString()
+					+" / COUNT(*)) FROM gcd_topic USE INDEX ("
+					+(strcate2?"ind_rank_main_sub_upd":"ind_rank_main_upd")
+					+") WHERE rank = 1 AND main_category = '"+strcate1+"' "
+					+(strcate2?" AND sub_category = '"+strcate2+"' ":" ")
+					+") FROM gcd_topic)"
+					+" ORDER BY updtime DESC LIMIT "+cfg.PAGEITEMNUMBER
+					//+(strpage? " OFFSET "+(cfg.PAGEITEMNUMBER*(strpage-1)) : " ")
+					+";";
+				console.log(sqlstr);
+			} else {
+				sqlstr = "SELECT * FROM gcd_topic USE INDEX ("
+					+(strcate2?"ind_rank_main_sub_upd":"ind_rank_main_upd")
+					+") WHERE rank = 1 AND main_category = '"+strcate1+"' "
+					+(strcate2?" AND sub_category = '"+strcate2+"' ":" ")
+					+" ORDER BY updtime DESC LIMIT "+cfg.PAGEITEMNUMBER
+					+(strpage? " OFFSET "+(cfg.PAGEITEMNUMBER*(strpage-1)) : " ")
+					+";";
+			}
 			myquery(sqlstr, function (rows){
 				gethotboard(strcate1 + (strcate2 ? ':' + strcate2 : ''), 20, function (hb) {
 					var hasresult = rows.length > 0;
@@ -130,23 +148,19 @@
 			}, cfg.DBCACHESECOND); //myquery(sqlstr, function (rows){
 		}, //function(req, res){
 		
-		"/search/:searchfor/:day?.:page([0-9]+)?":	
+		"/search/:searchfor.:page([0-9]+)?":	
 		function(req, res){
 			var start_time = Date.now();
 			var strsearch=(typeof(req.params.searchfor)=="string"?req.params.searchfor.replace(/[\/\-\\]/g,"").substring(0,80):void(0));
 			var strpage=(typeof(req.params.page)=="string"?parseInt(req.params.page):1);
-			var day=(typeof(req.params.day)=="string"?parseInt(req.params.day):0);
 			if (strpage > cfg.MAXPAGENUMBER) {
 				res.redirect("/404");
 				return;
 			}
 			wordseg.segment(strsearch, function(strseg){
-				var countsqlstr = "SELECT topic_id FROM gcd_search WHERE rank = 1"
-							+(day > 0 ?" AND updtime > DATE_SUB(CURDATE(),INTERVAL "+day+" DAY)":"")
-							+" AND MATCH(title) AGAINST ('"
+				var countsqlstr = "SELECT topic_id FROM gcd_search WHERE rank = 1 AND MATCH(title) AGAINST ('"
 							+escap(strseg.trim())+"')  LIMIT "+cfg.PAGEITEMNUMBER
 							+(strpage? " OFFSET "+(cfg.PAGEITEMNUMBER*(strpage-1)) : " ") + ";";
-			console.log(countsqlstr);
 				myquery(countsqlstr,function (rows) {
 					if(rows.length ==0){
 						gethotboard('index', 20, function (hb) {

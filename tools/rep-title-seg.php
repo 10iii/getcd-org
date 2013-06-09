@@ -19,6 +19,7 @@ try {
 		}
 	}
 	fclose($stdin);
+	$conn->query("UPDATE gcd_search AS a INNER JOIN gcd_topic AS b ON a.topic_id = b.topic_id SET a.rank = b.rank, a.updtime = b.updtime");
     $conn = null;
 } catch (PDOException $e) {
    print "Error!: " . $e->getMessage() . "<br/>";
