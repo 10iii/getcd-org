@@ -34,7 +34,7 @@
 	var c = new Crawler({
 		"maxConnections" : 2,
 		"jQuery" : false,
-		"forceUTF8" : true,
+		//"forceUTF8" : true,
 		"callback" : function (error,result) {
 			if (error){
 				util.log(error);
