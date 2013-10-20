@@ -27,10 +27,10 @@
       </div>
       <!--end: left-->
       <div class="right">
-        <form method="get" id="searchform" onsubmit="location.href='/search/'+$('#s').val();return false;" >
+        <form method="get" id="searchform" onsubmit="location.href='/search/'+$('#s').val()+'/90';return false;" >
           <div id="search">
             <input class="searchinput" value="Search..." onclick="this.value='';" name="s" id="s" type="text">
-            <input class="searchsubmit" value="GO" type="button" onclick="location.href='/search/'+$('#s').val();viod(0);">
+            <input class="searchsubmit" value="GO" type="button" onclick="location.href='/search/'+$('#s').val()+'/90';viod(0);">
           </div>
         </form>
       </div>

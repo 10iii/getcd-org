@@ -6,12 +6,18 @@ if (it.pagecount.toString().length == 0){
 var thispagelink = '/index';
 ?>
 <div id="content">
-<form method="get" id="mainsearchform" onsubmit="location.href='/search/'+$('#mains').val();return false;"  >
+<form method="get" id="mainsearchform" onsubmit="location.href='/search/'+$('#mains').val()+'/'+$('#searchdays').val();return false;"  >
 <div id="searchbox">
 	<p class="browse">
             <input class="searchinputmain" value="Search..." name="mains" id="mains" type="text">
-            <input class="searchsubmitmain" value="搜索 / SEARCH" type="button"  onclick="location.href='/search/'+$('#mains').val();viod(0);">
-        
+			<select class="searchinput" name="searchdays" id="searchdays">
+				<option value="30">更新日期30天内</option>
+				<option value="90" selected>更新日期90天内</option>
+				<option value="180">更新日期180天内</option>
+				<option value="360">更新日期360天内</option>
+				<option value="0">不限</option>
+				</select>
+            <input class="searchsubmitmain" value="搜索 / SEARCH" type="submit">
 	</p>
 </div>
 </form>

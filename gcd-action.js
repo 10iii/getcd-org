@@ -154,6 +154,7 @@
 								title: "SEARCH - "+strsearch,
 								hotboard: hb,
 								searchfor: strsearch,
+								day:day,
 								pagecount: [strpage],
 								totalpage: [1],
 								itrows: []
@@ -174,6 +175,7 @@
 									starttime: start_time,
 									title: "SEARCH - "+strsearch,
 									searchfor: strsearch,
+									day:day,
 									hotboard: hb,
 									pagecount: [strpage],
 									totalpage: [strpage+2],
