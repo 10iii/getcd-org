@@ -73,11 +73,8 @@
 			var start_time = Date.now();
 			var strsearch=(typeof(req.params.searchfor)=="string"?req.params.searchfor.replace(/[\/\-\\]/g,"").substring(0,50):void(0));
 			var strpage=(typeof(req.params.page)=="string"?parseInt(req.params.page):1);
-			rl.question(strsearch+"\n", function(strseg){
-				res.render('test', {
-					title: strseg,
-					testid: 123
-				});
+			wordseg.segment(strsearch, function(strseg){
+				res.send(strseg);
 			});
 		},
 		
